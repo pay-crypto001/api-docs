@@ -37,6 +37,8 @@
      * [5.3 Query transaction records](#Query-transaction-records)
      * [5.4 Query card information](#Query-card-information)
      * [5.5 User triggers a card withdrawal password reset Email (Currently not supported)](#User-triggers-a-card-withdrawal-password-reset-Email-(Currently-not-supported))
+     * [5.9 Freeze](#Freeze)
+     * [5.10 Unfreeze](#Unfreeze)
 * [6.Verification Code API](#Verification-Code-API)
      * [6.1 Sending Email verification code](#Sending-Email-verification-code)
      * [6.2 Email verification code validation](#Email-verification-code-validation)
@@ -374,7 +376,8 @@ method：GET
 - Request:
 
 ```text
-url：/api/v1/institution/estimation/currency
+url: /api/v1/institution/estimation/currency
+ or: /api/v1/institution/estimation/currency/external-deduction
 method：POST
 ```
 
@@ -521,6 +524,7 @@ method：POST
 | cust_tx_id            | String | Optional         | customer transaction id|
 | sign_img | String | Optional| hand signature image. Base64 encoding. File size should be less than 1M |
 | poa_doc | String[3] |Optional |Picture or PDF of proof of address(Currently not supported). Base64 encoding. Each file size should be less than 2M|
+| card_number | String |Optional | only support for special cards. sell card to the user first then user to do KYC|
 
 - Response:
 
@@ -591,7 +595,8 @@ method：GET
       {
         "acct_no": "1222",
         "card_type_id": "10010001",
-        "status": 2,
+        "status": 3,
+        "face_recognition_url": "https://www.hh.io", //Only special cards require face recognition
         "reason": "{\"code\":1110032,\"msg\":\"KYC failure, photo error\"}",
         "create_time": 1546300800000
       }
@@ -637,7 +642,8 @@ method：GET
       {
         "acct_no": "1222",
         "card_type_id": "10010001",
-        "status": 2,
+        "status": 3,
+        "face_recognition_url": "https://www.hh.io", //Only special cards require face recognition
         "reason": "{\"code\":1110032,\"msg\":\"KYC failure, photo error\"}",
         "create_time": 1546300800000
       }
@@ -672,7 +678,9 @@ method：POST
 | Parameter |  Type  | Whether Required |                            Description                            |
 | :-------: | :----: | :--------------: | :---------------------------------------------------------------: |
 |  acct_no  | String |     Required     | Institution account name (Unique within scope of the institution) |
-| card_type_id |String |Required | Card type id|   
+| card_type_id |String |Required | Card type id| 
+| card_number |String |Optional |only support for special cards. |
+| urn |String |Optional |only support for special cards.|  
 
 - Response:
 
@@ -776,6 +784,7 @@ method：GET
       {
         "acct_no": "1",
         "card_no": "4385211202597301",
+        "card_type_id":"72000001",
         "status": 1,
         "reason": "{\"code\":1110061,\"msg\":\"Activation failure, hand holding card is not plastic card\"}",
         "create_time": 1576847136000
@@ -789,6 +798,7 @@ method：GET
 | :---------: | :----: | :------------------------------------------------------------------: |
 |   acct_no   | String |  Institution account name (Unique within scope of the institution)   |
 |   card_no   |  int   |                             Card ID                              |
+|   card_type_id   | String |     card type ID     |
 |   status    |  int   | Status code : 0 - Frozen, 1 - Activated successfully, 2 - Not active, 3 - Under review, 4 - Verification failed, 5 - Apply card failed, card is being made，please apply later |
 | reason | String |      Reason for activation failure.        |
 | create_time |  long  |                            Creation time                             |
@@ -823,6 +833,7 @@ method：GET
       {
         "acct_no": "1",
         "card_no": "4385211202597301",
+        "card_type_id":"72000001",
         "status": 1,
         "reason": "{\"code\":1110061,\"msg\":\"Activation failure, hand holding card is not plastic card\"}",
         "create_time": 1576847136000
@@ -836,6 +847,7 @@ method：GET
 | :---------: | :----: | :------------------------------------------------------------------: |
 |   acct_no   | String |  Institution account name (Unique within scope of the institution)   |
 |   card_no   |  int   |                             Card ID                              |
+|   card_type_id   | String |     card type ID     |
 |   status    |  int   | Status code : 0 - Frozen, 1 - Activated successfully, 2 - Not active, 3 - Under review, 4 - Verification failed, 5 - Apply card failed, card is being made，please apply later |
 | reason | String |      Reason for activation failure.        |
 | create_time |  long  |                            Creation time                             |
@@ -964,7 +976,8 @@ or
 - Request:
 
 ```text
-url：/api/v1/deposit-transactions
+url: /api/v1/deposit-transactions
+ or: /api/v1/deposit-transactions/external-deduction
 method：POST
 ```
 
@@ -976,6 +989,7 @@ method：POST
 | coin_type  | String |     Required     |             Only USDT and RUSD supported yet              |
 | cust_tx_id | String |     Required     |                    Institution transaction ID                     |
 |  remarks   | String |     Optional     |                        Transaction remarks                        |
+|   card_currency | String | Optional| only for double currency card     |
 
 - Response:
 
@@ -1033,6 +1047,7 @@ method：POST
 | coin_type  | String |     Required     |             Only USDT supported yet              |
 | cust_tx_id | String |     Required     |                    Institution transaction ID                     |
 |  remarks   | String |     Optional     |                        Transaction remarks                        |
+|   card_currency | String | Optional| only for double currency card     |
 
 - Response:
 
@@ -1345,6 +1360,7 @@ method：POST
 | Parameter |  Type  | Whether Required | Description |
 | :-------: | :----: | :--------------: | :---------- |
 |  card_no  | String |     Required     | Card ID |
+|   card_currency | String | Optional| only for double currency card     |
 
 - Response:
 
@@ -1412,7 +1428,10 @@ method：POST
                   "debit": "2.50",
                   "debit_usd": "2.50",                  
                   "credit": "",
-                  "credit_usd": "",                  
+                  "credit_usd": "", 
+                  "fee": "0",
+                  "end_bal": "end_bal", 
+                  "origin_transaction_id": "",               
                   "type": 1
               },
               {
@@ -1424,6 +1443,9 @@ method：POST
                   "debit_usd": "2.50",                  
                   "credit": "",
                   "credit_usd": "", 
+                  "fee": "0",
+                  "end_bal": "end_bal", 
+                  "origin_transaction_id": "",   
                   "type": 1
               }
           ]
@@ -1451,11 +1473,14 @@ method：POST
 |      bank_tx_list[0].debit_usd       | String | Debit amount(USD)                                                       |
 |      bank_tx_list[0].credit      | String | Credit amount(card currency)                                                      |
 |      bank_tx_list[0].credit_usd      | String | Credit amount(USD)                                                      |
-|       bank_tx_list[0].type       |  int   | Transaction type, 1. Debit, 2. Deposit, 3. Withdrawal, 4. Transfer in, 5. Transfer out, 6. other  7. Settlement Adjustment  8. refund |
+|   bank_tx_list[0].fee   | String | fee  |
+|       bank_tx_list[0].type       |  int   | Transaction type, 1. Debit, 2. Deposit, 3. Withdrawal, 4. Transfer in, 5. Transfer out, 6. other  7. Settlement Adjustment  8. refund 9.transaction fail 10.verification transaction 11.void |
 |   bank_tx_list[0].tx_currency   | String | Actual transaction currency  |
 |   bank_tx_list[0].tx_amount   | String | Transaction amount of actual transaction currency  |
+|   bank_tx_list[0].end_bal   | String |   |
+|   bank_tx_list[0].origin_transaction_id | String |  |
 
-### Query card information
+### Query card security information
 
 - Request:
 
@@ -1518,7 +1543,7 @@ An institution invokes the Paycrypto API triggering the action that sends the ba
 - Request:
 
 ```text
-url：/api/v1/debit-cards/deposit-pwd-emails?acct_no={acct_no}
+url：/api/v1/bank/reset-pwd
 method：POST
 ```
 
@@ -1534,6 +1559,53 @@ method：POST
   "code": 0,
   "msg": "string",
   "result": true
+}
+```
+
+### freeze
+
+```text
+url：/api/v1/bank/freeze
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |Required|  |
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": {}
+}
+```
+
+
+### unfreeze
+
+```text
+url：/api/v1/bank/unfreeze
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |Required|  |
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": {}
 }
 ```
 
@@ -1740,7 +1812,7 @@ The bank card has been made, please apply.
 
 | Parameter| Type|Description |
 | --- | --- |--- |
-| action |String  |  card-application|
+| action |String  |  card-application-ready |
 | events[n].params.acct_no |String | Institution account name (Unique within scope of the institution) |
 | events[n].params.card_type_id |String | card type id |
 
@@ -1797,14 +1869,14 @@ events[n] element convert string to json:
 
 | Parameter| Type|Description |
 | --- | --- |--- |
-| action |String |  deposit-status|
+| action |String |  tx-status|
 | events[n].params.tx_id |String | Transaction ID |
 | events[n].params.status  |int| status, 1.Successful, 2.Failure, 5.Canceled |
 
 Event example:
 ```
 {
-    "action": "deposit-status",
+    "action": "tx-status",
     "events": [
         "{\"id\":\"bc76488ddda4\",\"create_time\":1585293811000,\"params\":{\"tx_id\":\"2020031609283339501898843\",\"status\":1}}"
     ]
@@ -1820,6 +1892,101 @@ events[n] element convert string to json:
        }
 }
 ```
+
+
+### credit card balance updated
+
+| 名称| 类型|描述 |
+| --- | --- |--- |
+| action |String |  creditcard-balance-updated |
+| events[n].params.tx_id |String |  card transaction ID |
+| events[n].params.card_no |String | card ID |
+
+示例：
+```
+{
+    "action": "creditcard-balance-updated",
+    "events": [
+        "{\"id\":\"bc76488ddda4\",\"create_time\":1585293811000,\"params\":{\"card_no\": \"78833000000198766\",\"tx_id\":\"2020031609283339501898843\",\"type\":1}}"
+    ]
+}
+
+events element convert string to json:
+{
+       "id": "bc76488ddda4",
+       "create_time": 1585293811000,
+       "params":{
+           "tx_id": "2020031609283339501898843",
+           "card_no": "78833000000198766"
+       }
+}
+```
+
+### deposit card balance updated
+
+| 名称| 类型|描述 |
+| --- | --- |--- |
+| action |String |  depositcard-balance-updated |
+| events[n].params.tx_id |String | card transaction ID |
+| events[n].params.card_no |String |  |
+
+示例：
+```
+{
+    "action": "depositcard-balance-updated",
+    "events": [
+        "{\"id\":\"bc76488ddda4\",\"create_time\":1585293811000,\"params\":{\"card_no\": \"78833000000198766\",\"tx_id\":\"2020031609283339501898843\",\"type\":1}}"
+    ]
+}
+
+events element convert string to json:
+{
+       "id": "bc76488ddda4",
+       "create_time": 1585293811000,
+       "params":{
+           "tx_id": "2020031609283339501898843",
+           "card_no": "78833000000198766"
+       }
+}
+```
+
+
+### One time password
+
+One time password
+
+| 名称| 类型|描述 |
+| --- | --- |--- |
+| action |String |  card-3ds-otp |
+| events[n].params.otp |String | otp |
+| events[n].params.card_no |String | card id |
+| events[n].params.transaction_currency |String | transaction currency |
+| events[n].params.transaction_amount |String | transaction amount |
+| events[n].params.merchant_name |String | merchant name |
+
+示例：
+```
+{
+    "action": "card-3ds-otp",
+    "events": [
+        "{\"id\":\"bc76488ddda4\",\"create_time\":1585293811000,\"params\":{\"card_no\": \"78833000000198766\",\"otp\":\"234235\",\"transaction_currency\":\"USD\",\"transaction_amount\":\"100\",\"merchant_name\":\"Example Merchant\"}}"
+    ]
+}
+
+events element convert string to json:
+{
+       "id": "bc76488ddda4",
+       "create_time": 1585293811000,
+       "params":{
+           "otp": "234235",
+           "card_no": "78833000000198766",
+           "transaction_currency": "USD", 
+           "transaction_amount": "100", 
+           "merchant_name": "Example Merchant"
+       }
+}
+```
+
 
 ### Test push events
 
