@@ -91,12 +91,12 @@ API usage steps are as follows:
 
 Dashboard :
 
-* Test environment dashboard (restricted by IP whitelist): https://customer.sandbox.paycrypto.com/
+* Test environment dashboard (restricted by IP whitelist): https://customer-sandbox.paycrypto.com/
 * Production environment dashboard (restricted by IP whitelist): https://customer.paycrypto.com/
 
 API :
 
-* Test environment: https://api.sandbox.paycrypto.com/
+* Test environment: https://api-sandbox.paycrypto.com/
 * Production environment: https://api.paycrypto.com/
 
 ## API Specifications
