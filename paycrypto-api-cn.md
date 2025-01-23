@@ -119,12 +119,12 @@ API 使用步骤：
 
 机构 Dashboard :
 
-* 测试环境（有IP白名单限制）: https://customer.sandbox.paycrypto.com/
+* 测试环境（有IP白名单限制）: https://customer-sandbox.paycrypto.com/
 * 生产环境（有IP白名单限制）: https://customer.paycrypto.com/
 
 API 域名：
 
-* 测试环境: https://api.sandbox.paycrypto.com/
+* 测试环境: https://api-sandbox.paycrypto.com/
 * 生产环境: https://api.paycrypto.com/
 
 ## 接口规范
@@ -899,6 +899,7 @@ method：PUT
 | :------------: | :----: | :----------: |:---------- |
 |    card_no     | String |      必填    |银行卡ID          |
 | acct_no | String | 必填    |机构端用户编号(机构端唯一) |
+| cvv |String |可选 | 有的实体卡激活时需要提交cvv |
 
 
 

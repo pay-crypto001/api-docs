@@ -744,6 +744,7 @@ method：PUT
 | :-------: | :----: | :--------------: | :---------------------------------------------------------------: |
 |  acct_no  | String |     Required     | Institution account name (Unique within scope of the institution) |
 |  card_no  | String |     Required     |                           Bank card no.                           |
+| cvv |String |Optional | some physical card need submit cvv |
 
 - Response:
 
