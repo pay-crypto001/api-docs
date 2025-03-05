@@ -72,6 +72,9 @@
      - [8.8 查询信用卡月限额](#查询信用卡月限额)
      - [8.9 卡冻结](#卡冻结)
      - [8.10 卡解冻](#卡解冻)
+     - [8.11 实体卡初始化密码](#实体卡初始化密码)
+     - [8.12 实体卡更新密码](#实体卡更新密码)
+     - [8.13 实体卡重置密码](#实体卡重置密码)
 
 - [9.验证码](#验证码-不支持)
      - [9.1 发送邮箱验证码](#发送邮箱验证码)
@@ -2845,7 +2848,81 @@ method：POST
 }
 ```
 
+### 实体卡初始化密码
 
+```text
+url：/api/v1/bank/initpassword
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |必填| 银行卡ID |
+|     pin     | String |必填|  |
+|     confirm_pin     | String |必填|  |
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": true
+}
+```
+
+### 实体卡更新密码
+
+```text
+url：/api/v1/bank/updatepassword
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |必填| 银行卡ID |
+|     new_pin     | String |必填|  ｜
+|     old_pin     | String |必填|  ｜
+
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": true
+}
+```
+
+### 实体卡重置密码
+
+```text
+url：/api/v1/bank/resetpassword
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |必填| 银行卡ID |
+|     pin     | String |必填|  |
+|     confirm_pin     | String |必填|  |
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": true
+}
+```
 
 ## 验证码（不需要对接）
 
