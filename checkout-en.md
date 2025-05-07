@@ -1,5 +1,15 @@
 # PayCrypto-Checkout API Document
 
+
+* [Integration steps](#Integration-steps)
+* [POST Create Payment Order](#POST-Create-Payment-Order)
+* [GET Query Order Record by Order Number](#GET-Query-Order-Record-by-Order-Number)
+* [GET Query Order Records](#GET-Query-Order-Records)
+* [GET Query the order amount threshold](#GET-Query-the-order-amount-threshold)
+* [Webhook](#Webhook-Order-Status-Push)
+* [POST Test Webhook](#POST-Test-Webhook)
+
+
 [PayCrypto](https://paycrypto.com/) is a leading cryptocurrency service provider in the industry, supporting various businesses such as cryptocurrency payment acceptance, card issuance, and corporate cards. This document provides API services specifically for the cryptocurrency payment acceptance business to meet the payment needs of merchants.
 
 We provides a collection of APIs that enable you to process and manage payments. Our APIs accept and return JSON in the HTTP body, and return standard [HTTP response codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes). You can consume the APIs directly using your favorite HTTP/REST library. We have a testing environment called sandbox, which you can [sign up](https://merchants-sandbox.paycrypto.com/) for to test API calls without affecting live data.
@@ -14,7 +24,7 @@ We provides a collection of APIs that enable you to process and manage payments.
 3. Webhooks API allows to receive real-time events. Merchants can access the [Developers - Webhooks menu](https://merchants-sandbox.paycrypto.com/), where they can choose to configure Webhook callbacks. Any changes in the order status will be notified to the merchant's service via the callback URL.
 
 
-[img](https://content.pstmn.io/9bf4cbfb-b614-4a45-adf1-2e447b0b5c9f/a2V5LnBuZw==)
+![img](https://content.pstmn.io/9bf4cbfb-b614-4a45-adf1-2e447b0b5c9f/a2V5LnBuZw==)
 
 
 
@@ -217,7 +227,7 @@ response: {
 |119006	|Unauthorized API|
 |119007	|Public key format error|
 
-### POST Payment Acceptance - Create Payment Order
+### POST Create Payment Order
 
 The checkout API service will return the payment URL. When a payment is made at the payment URL, the payment result will be redirected to the return_urls address. For example, return_url?id=2021031609283339501898843&status={0. In - progress, 1. Payment successful, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed}
 
@@ -233,7 +243,7 @@ Request：
 | :---------: | :----:   | :--------------------------- | :--------------------------- |
 |currency|	String	|Required|	Currency, For example: USD,USDT,USDT-BEP20,USDT-TRC20,USDT-SPL|
 |amount|	String	|Required	| Order amount|
-|cust_order_id|	String	Required	Merchant order number|
+|cust_order_id|	String	｜ Required	｜ Merchant order number|
 |expire|	long|	Optional|	Expiration time, in milliseconds. It is recommended not to fill it in. If not filled, it will expire 100 minutes after the start of payment by default.|
 |return_url|	String	|Optional|	Redirect URL. This page will be redirected to upon successful payment.|
 |customer|	Object|	Optional|	Customer infomation|
@@ -279,7 +289,7 @@ Response: {
 ```
 
 
-### GET Payment Acceptance - Query Order Record by Order Number
+### GET Query Order Record by Order Number
 
 Query a single order record
 
@@ -355,7 +365,7 @@ Response: {
 ```
 
 
-### GET Payment Acceptance - Query Order Records
+### GET Query Order Records
 
 Query order records by pagination
 
@@ -389,7 +399,7 @@ Response：
 |currency_rate	|String	|Currency rate|
 |reason	|String	|Reasons for success, failure, etc.|
 |create_time	|String|	Creation time|
-|update_time|	String	Update time|
+|update_time|	String	｜ Update time|
 
 
 
@@ -440,7 +450,7 @@ Response: {
 ```
 
 
-### GET Payment Acceptance - Query the order amount threshold
+### GET Query the order amount threshold
 
 Query the order amount threshold
 
@@ -475,7 +485,7 @@ Response: {
 ```
 
 
-###  Webhook-Order Status Push
+###  Webhook
 
 Please first configure the correct Webhook callback address in the merchant backend; otherwise, you won't be able to receive the data. When a push is received, parse the Header for signature verification. The push request header contains two fields for security authentication:
 
@@ -551,7 +561,7 @@ Response format：
 ```
 
 
-### POST Webhook-Test Push
+### POST Test Webhook
 
 This interface is used to verify whether the callback function is working properly. After you call this interface, we will send a test data to your callback address within 10 seconds.
 
