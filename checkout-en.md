@@ -254,6 +254,13 @@ Request：
 |return_url|	String	|Optional|	Redirect URL. This page will be redirected to upon successful payment.|
 |customer|	Object|	Optional|	Customer infomation|
 
+Customer：
+
+|Parameter|	Type	|Whether Required	|Description|
+| :---------: | :----:   | :--------------------------- | :-------------------------- |
+|customer|	Object|	Optional|	When the order status changes, customers will be notified via email.|
+
+
 Response：
 
 |Parameter|	Type|	Description|
