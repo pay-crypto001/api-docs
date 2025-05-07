@@ -55,7 +55,7 @@ Our back-end SDKs allow you to process payments securely, without having to hand
 **Javascript** code sample: [https://github.com/inst-money/inst-sdk-js](https://github.com/inst-money/inst-sdk-js)
 
 ```java
-String host = "https://payapi-sandbox.paycrypto.com";
+  String host = "https://payapi-sandbox.paycrypto.com";
   String apiKey = "";
   String apiSecret = "";
   String apiPassphrase = "";
@@ -262,7 +262,7 @@ Response：
 |redirect_url	|String	|Payment link|
 |create_time|	String	|Creation time|
 
-```
+```json
 
 HEADERS
 
@@ -329,7 +329,7 @@ Response：
 |update_time|	String	|Update time|
 
 
-```
+```json
 HEADERS
 
 Content-Type:application/json
@@ -409,7 +409,7 @@ Response：
 
 
 
-```
+```json
 
 
 Request: currency=usd&start_timestamp=1585293811000&end_timestamp=1585293812333&page=1&page_size=10
@@ -475,7 +475,7 @@ Response：
 | max_limit| 	long	| The maximum amount of the payment order must be less than this amount.| 
 | fiat_list| 	Array| 	Currency| 
 
-```
+```json
 
 Response: {
 	"code": 0,
@@ -536,7 +536,7 @@ The request parameters for pushing the order_result Action are:
 
 
 
-```
+```json
 
 Order status push:
 {
@@ -576,7 +576,7 @@ https://payapi-sandbox.paycrypto.com/api/v1/events/test
 ```
 
 
-```
+```json
 Request: {}
 
 
