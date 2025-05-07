@@ -151,7 +151,7 @@ The parameter names of the request body need to be based on the respective ASCII
 
 Here is an example body-
 
-```
+```json
 {
     "from_address":"0xef678007D18427E6022059Dbc264f27507CD1ffC",
     "amount":190,
