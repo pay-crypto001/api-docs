@@ -90,6 +90,7 @@ String host = "https://payapi-sandbox.paycrypto.com";
 
 
 | Parameter	| Type |	Description |
+| :---------: | :----:   | :--------------------------- |
 |code	|int	| Error code. 0: Normal, non-0: Abnormal |
 |msg	| string	| SUCCESS indicates success, error code indicates and describes failure |
 | result |	object |	Result |
@@ -99,6 +100,7 @@ String host = "https://payapi-sandbox.paycrypto.com";
 The merchant first needs to apply for the API key and API secret that will be used when accessing the API.
 
 | Term | 	Description |
+| :---------: | :----:   | :--------------------------- |
 | API Key & API Secret | 	Multiple API key + API secret maintained under a User ID, API key is linked with an application, multiple applications are allowed, each application can apply for API access privileges |
 
 ### Client side implementation process:
@@ -178,6 +180,7 @@ response: {
 
 
 | Status Code |	Description |
+| :---------: | :----:   | 
 |0	|Succesful|
 |111001	|Request parameter error|
 |111002	|This currency is not supported.|
@@ -189,6 +192,7 @@ response: {
 
 
 |Status Code	|Description|
+| :---------: | :----:   | 
 |112001	|Request timed out|
 |112002	|Illegal access privileges|
 |112003	|Invalid IP address|
@@ -204,6 +208,7 @@ response: {
 ### Abnormal Status Error Codes
 
 |Status Code	|Description|
+| :---------: | :----:   | 
 |119001	|Service unusable|
 |119002	|Communication error|
 |119003	|Data encryption error|
@@ -224,6 +229,7 @@ http://{{host}}/api/v1/payment
 
 
 |Parameter|	Type	|Whether Required	|Description|
+| :---------: | :----:   | :--------------------------- | :--------------------------- |
 |currency|	String	|Required|	Currency, For example: USD,USDT,USDT-BEP20,USDT-TRC20,USDT-SPL|
 |amount|	String	|Required	| Order amount|
 |cust_order_id|	String	Required	Merchant order number|
@@ -234,6 +240,7 @@ http://{{host}}/api/v1/payment
 Response：
 
 |Parameter|	Type|	Description|
+| :---------: | :----:   | :--------------------------- | 
 |order_id|	String|	Order number|
 |redirect_url	|String	|Payment link|
 |create_time|	String	|Creation time|
@@ -283,6 +290,7 @@ http://{{host}}/api/v1/orders
 Request：
 
 |Parameter|	Type|	Whether Required|	Description|
+| :---------: | :----:   | :--------------------------- | :--------------------------- |
 |order_id|	String|	Optional|	Checkout order number|
 |cust_order_id|	String	|Optional	|Merchant order number|
 
@@ -290,6 +298,7 @@ Request：
 Response：
 
 |Parameter	|Type	|Description|
+| :---------: | :----:   | :--------------------------- | 
 |currency|	String|	Currency|
 |amount|	String	|Order Amount|
 |paid_currency	|String|	User payment currency|
@@ -357,6 +366,7 @@ http://{{host}}/api/v1/orders?currency=usd&start_timestamp=1585293811000&end_tim
 Request：
 
 |Parameter|	Type|	Whether Required|	Description|
+| :---------: | :----:   | :--------------------------- | :--------------------------- |
 |currency	|String	|Optional|	Currency|
 |start_time	|String|	Optional|	Start time, in the form of a timestamp, such as 1626339331000|
 |end_time|	String|	Optional|	End time, in the form of a timestamp, such as 1626339331000. By default, it is the current time.|
@@ -367,6 +377,7 @@ Request：
 Response：
 
 |Parameter|	Type	|Description|
+| :---------: | :----:   | :--------------------------- | 
 |currency	|String|	Currency|
 |amount	|String|	Order amount|
 |paid_currency|	String|	User payment currency|
@@ -441,6 +452,7 @@ http://{{host}}/api/v1/merchant/limit
 Response：
 
 | Parameter	| Type| 	Description| 
+| :---------: | :----:   | :--------------------------- | 
 | cust_name| 	String| 	Merchant name| 
 | min_limt| 	long | 	The minimum amount of the payment order must be greater than this amount.| 
 | max_limit| 	long	| The maximum amount of the payment order must be less than this amount.| 
@@ -471,12 +483,14 @@ https://{merchant's host}/callback
 ```
 
 | Header | 	Type| 	Description| 
+| :---------: | :----:   | :--------------------------- | 
 | Signature	| String	SIgnature| 
 | Timestamp	| String	Timestamp| 
 
 To improve efficiency, for the same type of Action, we will push multiple events in batches. The data structure of the pushed event Body is as follows:
 
 | Parameter	| Type	| Description| 
+| :---------: | :----:   | :--------------------------- | 
 | action	| String| 	Push type, e.g., order_result (order result)| 
 | events	| String[]	| Array of pushed messages| 
 | events[n].params	| Object| 	The content of the messages pushed this time, presented as a JSON object| 
@@ -487,6 +501,7 @@ To improve efficiency, for the same type of Action, we will push multiple events
 After the institution receives the push, the data structure of the response for all Actions is the same. As long as the format returned by the institution is correct, regardless of the code value, we will no longer push this event. The return format is as follows:
 
 | Parameter	| Type| 	Description| 
+| :---------: | :----:   | :--------------------------- | 
 | code	| int| 	0: success, other: failure| 
 | msg	| String| 	Description of error code| 
 
@@ -496,6 +511,7 @@ After the institution receives the push, the data structure of the response for 
 The request parameters for pushing the order_result Action are:
 
 | Parameter	| Type	| Whether Required	| Description| 
+| :---------: | :----:   | :--------------------------- | :--------------------------- |
 | action| 	String| 	Required| 	order_result| 
 | events	| String[]| 	Required	| The array of pushed messages| 
 | events[n].params.order_id	| String| 	Required| 	Checkout order number| 
