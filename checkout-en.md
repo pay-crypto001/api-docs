@@ -1,13 +1,7 @@
-# PayCrypto-Checkout API Document
+# PayCrypto-Checkout API Documentation
 
 
-* [Integration steps](#Integration-steps)
-* [POST Create Payment Order](#POST-Create-Payment-Order)
-* [GET Query Order Record by Order Number](#GET-Query-Order-Record-by-Order-Number)
-* [GET Query Order Records](#GET-Query-Order-Records)
-* [GET Query the order amount threshold](#GET-Query-the-order-amount-threshold)
-* [Webhook](#Webhook-Order-Status-Push)
-* [POST Test Webhook](#POST-Test-Webhook)
+
 
 
 [PayCrypto](https://paycrypto.com/) is a leading cryptocurrency service provider in the industry, supporting various businesses such as cryptocurrency payment acceptance, card issuance, and corporate cards. This document provides API services specifically for the cryptocurrency payment acceptance business to meet the payment needs of merchants.
@@ -15,7 +9,17 @@
 We provides a collection of APIs that enable you to process and manage payments. Our APIs accept and return JSON in the HTTP body, and return standard [HTTP response codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes). You can consume the APIs directly using your favorite HTTP/REST library. We have a testing environment called sandbox, which you can [sign up](https://merchants-sandbox.paycrypto.com/) for to test API calls without affecting live data.
 
 
-## Integration steps
+* [Integration Steps](#Integration-Steps)
+* [API Documentation](#API-Documentation)
+    * [POST Create Payment Order](#POST-Create-Payment-Order)
+    * [GET Query Order Record by Order Number](#GET-Query-Order-Record-by-Order-Number)
+    * [GET Query Order Records](#GET-Query-Order-Records)
+    * [GET Query the order amount threshold](#GET-Query-the-order-amount-threshold)
+    * [Webhook](#Webhook-Order-Status-Push)
+    * [POST Test Webhook](#POST-Test-Webhook)
+* [Error Codes](#Error-Codes)
+
+## Integration Steps
 
 1. Register as a merchant in the [merchant backend](https://merchants-sandbox.paycrypto.com/) and wait for PayCrypto's review. Merchants can login successfully only after PayCrypto approves the review.
 
@@ -41,7 +45,7 @@ Sandbox environment：[https://payapi-sandbox.paycrypto.com](https://payapi-sand
 Live environment：[https://payapi.paycrypto.com](https://payapi.paycrypto.com)
 
 
-## Back-end SDKs
+### Back-end SDKs
 Our back-end SDKs allow you to process payments securely, without having to handle sensitive data. We offer SDKs for the following languages:
 
 **Java** code sample: [https://github.com/inst-money/inst-java-sdk](https://github.com/inst-money/inst-java-sdk)
@@ -226,6 +230,8 @@ response: {
 |119005	|Too many API requests|
 |119006	|Unauthorized API|
 |119007	|Public key format error|
+
+## API Documentation
 
 ### POST Create Payment Order
 
