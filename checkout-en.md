@@ -54,7 +54,7 @@ Our back-end SDKs allow you to process payments securely, without having to hand
 
 **Javascript** code sample: [https://github.com/inst-money/inst-sdk-js](https://github.com/inst-money/inst-sdk-js)
 
-```
+```java
 String host = "https://payapi-sandbox.paycrypto.com";
   String apiKey = "";
   String apiSecret = "";
