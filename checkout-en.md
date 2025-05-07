@@ -110,7 +110,7 @@ String host = "https://payapi-sandbox.paycrypto.com";
 | result |	object |	Result |
 
 
-## HMAC Authentication
+### HMAC Authentication
 The merchant first needs to apply for the API key and API secret that will be used when accessing the API.
 
 | Term | 	Description |
