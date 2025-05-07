@@ -100,7 +100,7 @@ String host = "https://payapi-sandbox.paycrypto.com";
 The merchant first needs to apply for the API key and API secret that will be used when accessing the API.
 
 | Term | 	Description |
-| :---------: | :----:   | :--------------------------- |
+| :---------: | :----:   | 
 | API Key & API Secret | 	Multiple API key + API secret maintained under a User ID, API key is linked with an application, multiple applications are allowed, each application can apply for API access privileges |
 
 ### Client side implementation process:
@@ -155,7 +155,7 @@ request body: {amount=10, currency=USD, cust_order_id=1185a4d49e1c, customer={"z
 
 origin sign data: 1646279846494POSTddb2e451f9534b61a3476f6f4316087e/api/v1/paymentamount=10¤cy=USD&cust_order_id=1185a4d49e1c&customer={"address":"sgasgs,shfojsg,AA","city":"B","country":"USA","email":"josh_chow6@qq.com","first_name":"Jack","last_name":"Li","phone":"+12123434235","state":"A","zipcode":"24000"}&return_url=https://docs.google.com/
 
-https://{host}/api/v1/payment
+https://payapi-sandbox.paycrypto.com/api/v1/payment
 Authorization:Inst:apiKey:1646279846494:signature
 Access-Passphrase:12345678a
 
@@ -223,10 +223,11 @@ The checkout API service will return the payment URL. When a payment is made at 
 
 
 ```
-http://{{host}}/api/v1/payment
+https://payapi-sandbox.paycrypto.com/api/v1/payment
 
 ```
 
+Request：
 
 |Parameter|	Type	|Whether Required	|Description|
 | :---------: | :----:   | :--------------------------- | :--------------------------- |
@@ -265,11 +266,11 @@ Request: {
 }
 
 Response: {
-    "code": 0,
+    "code": 0
     "msg": "SUCCESS",
     "result": {
         "order_id": "2021031609283339501898843",
-        "redirect_url": "https://{host}/?id={id}&currency={fiat or cryptocurrency name}",
+        "redirect_url": "https://pay-sandbox.paycrypto.com/?id=il25050709552116315",
         "create_time": 1585293811000
     }
 }
@@ -283,7 +284,7 @@ Response: {
 Query a single order record
 
 ```
-http://{{host}}/api/v1/orders
+https://payapi-sandbox.paycrypto.com/api/v1/orders
 
 ```
 
@@ -305,7 +306,7 @@ Response：
 |paid_amount	|String	|User payment amount|
 |cust_order_id	|String	|Merchant order number|
 |order_id|	String	|Checkout order number|
-|status	String	Order status. 0. In processing, 1. Success, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed|
+|status|	String	| Order status. 0. In processing, 1. Success, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed|
 |currency_rate|	String|	Currency rate|
 |reason|	String	|Reasons for success, failure, etc.|
 |create_time|	String|	Creation time|
@@ -359,7 +360,7 @@ Response: {
 Query order records by pagination
 
 ```
-http://{{host}}/api/v1/orders?currency=usd&start_timestamp=1585293811000&end_timestamp=1585293812333&page_num=1&page_size=10
+https://payapi-sandbox.paycrypto.com/api/v1/orders?currency=usd&start_timestamp=1585293811000&end_timestamp=1585293812333&page_num=1&page_size=10
 ```
 
 
@@ -384,7 +385,7 @@ Response：
 |paid_amount|	String	|User payment amount|
 |cust_order_id	|String	|Merchant order number|
 |order_id	|String	|Checkout order number
-status	String	Order status. 0. In processing, 1. Success, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed|
+|status	|String|	Order status. 0. In processing, 1. Success, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed|
 |currency_rate	|String	|Currency rate|
 |reason	|String	|Reasons for success, failure, etc.|
 |create_time	|String|	Creation time|
@@ -444,7 +445,7 @@ Response: {
 Query the order amount threshold
 
 ```
-http://{{host}}/api/v1/merchant/limit
+https://payapi-sandbox.paycrypto.com/api/v1/merchant/limit
 
 ```
 
@@ -484,8 +485,8 @@ https://{merchant's host}/callback
 
 | Header | 	Type| 	Description| 
 | :---------: | :----:   | :--------------------------- | 
-| Signature	| String	SIgnature| 
-| Timestamp	| String	Timestamp| 
+| Signature	| String |	The signature| 
+| Timestamp	| String |	The timestamp| 
 
 To improve efficiency, for the same type of Action, we will push multiple events in batches. The data structure of the pushed event Body is as follows:
 
@@ -555,7 +556,7 @@ Response format：
 This interface is used to verify whether the callback function is working properly. After you call this interface, we will send a test data to your callback address within 10 seconds.
 
 ```
-http://{{host}}/api/v1/events/test
+https://payapi-sandbox.paycrypto.com/api/v1/events/test
 ```
 
 
