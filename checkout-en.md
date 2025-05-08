@@ -256,9 +256,9 @@ Request：
 
 Customer：
 
-|Parameter|	Type	|Whether Required	|Description|
-| :---------: | :----:   | :--------------------------- | :-------------------------- |
-|customer|	Object|	Optional|	When the order status changes, customers will be notified via email.|
+|Parameter| 	Type	  |Whether Required	|Description|
+| :---------: |:-------:| :--------------------------- | :-------------------------- |
+|customer| 	String |	Optional|	When the order status changes, customers will be notified via email.|
 
 
 Response：
