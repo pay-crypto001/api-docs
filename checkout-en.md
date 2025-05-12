@@ -250,7 +250,7 @@ Request：
 |currency|	String	|Required|	Currency, For example: USD,USDT,USDT-BEP20,USDT-TRC20,USDT-SPL|
 |amount       |	 String	|Required	| Order amount|
 |cust_order_id |	String | Required | Merchant order number  |
-|return_url|	String	|Optional|	Redirect URL. This page will be redirected to upon successful payment.|
+|return_url|	String	|Optional|	After the order is completed, whether successful or failed, the user will be redirected to this URL.|
 |notify_url|	String	|Optional|	Webhook URL. we will push order status changes to you.|
 |expire|	long|	Optional|	Expiration time, in milliseconds. It is recommended not to fill it in. If not filled, it will expire 100 minutes after the start of payment by default.|
 |customer|	Object|	Optional|	Customer infomation|
