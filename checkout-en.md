@@ -251,6 +251,7 @@ Request：
 |amount       |	 String	|Required	| Order amount|
 |cust_order_id |	String | Required | Merchant order number  |
 |return_url|	String	|Optional|	Redirect URL. This page will be redirected to upon successful payment.|
+|notify_url|	String	|Optional|	Webhook URL. we will push order status changes to you.|
 |expire|	long|	Optional|	Expiration time, in milliseconds. It is recommended not to fill it in. If not filled, it will expire 100 minutes after the start of payment by default.|
 |customer|	Object|	Optional|	Customer infomation|
 
