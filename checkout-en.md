@@ -248,8 +248,8 @@ Request：
 |Parameter|	Type	|Whether Required	|Description|
 | :---------: | :----:   | :--------------------------- | :--------------------------- |
 |currency|	String	|Required|	Currency, For example: USD,USDT,USDT-BEP20,USDT-TRC20,USDT-SPL|
-|amount|	String	|Required	| Order amount|
-|cust_order_id |	String	｜ Required	｜ Merchant order number|
+|amount       |	 String	|Required	| Order amount|
+|cust_order_id |	String | Required | Merchant order number  |
 |return_url|	String	|Optional|	Redirect URL. This page will be redirected to upon successful payment.|
 |expire|	long|	Optional|	Expiration time, in milliseconds. It is recommended not to fill it in. If not filled, it will expire 100 minutes after the start of payment by default.|
 |customer|	Object|	Optional|	Customer infomation|
