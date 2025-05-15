@@ -202,7 +202,7 @@ amount=190&from_address=Ae9ujqUnAtH9yRiepRvLUE3t9R2NbCTZPG&to_address=AUol16ghiT
 
 #### 实现代码示例：
 
-请参考：[https://github.com/paycrypto-com/paycrypto-sdk-java](https://github.com/paycrypto-com/paycrypto-sdk-java)
+请参考：[https://github.com/pay-crypto001/paycrypto-sdk-java](https://github.com/pay-crypto001/paycrypto-sdk-java)
 
 
 ## 机构
