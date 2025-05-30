@@ -1344,7 +1344,7 @@ method：POST
 {
   "code": 0,
   "msg": "string",
-  "result": true
+  "result": true // The card has been activated
 }
 ```
 
