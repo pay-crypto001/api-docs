@@ -611,7 +611,7 @@ Response: {
 
 # FAQ Frequently Asked Questions
 
-##### How to create API key?
+### How to create API key?
 
 ![](./imgs/create-apikey.jpeg)
 
@@ -620,7 +620,7 @@ please enable google authenticate.
 ![](./imgs/ga.jpeg)
 
 
-##### Please unlock my merchant account email by demo@gmail.com ？
+### Please unlock my merchant account email by demo@gmail.com ？
 
 approved in Sandbox. 
 Sandbox: https://merchants-sandbox.paycrypto.com/user/login
@@ -628,7 +628,7 @@ Sandbox: https://merchants-sandbox.paycrypto.com/user/login
 approved in Live.
 Live: https://merchants.paycrypto.com/user/login
 
-##### A question about api get url. What should I put as {{host}} in this example? And I guess it must be https.
+### A question about api get url. What should I put as {{host}} in this example? And I guess it must be https.
 
 http://{{host}}/api/v1/orders?currency=usd&start_timestamp=1585293811000&end_timestamp=1585293812333&page_num=1&page_size=10
 
@@ -644,7 +644,7 @@ The API service cannot be opened directly using a browser. After your engineers 
 My IT guy says host name is something your api allowing host or ip.  But it has api directory so I guess your host. If I need to request api issue, please let me know. I created only webhook.
 
 
-##### How to create by GET url with parameters?
+### How to create by GET url with parameters?
 Please refer to our Backend SDKs.
 
 
@@ -674,17 +674,17 @@ Payment Acceptance - Create Payment Order
 http://{{host}}/api/v1/payment
 The checkout API service will return the payment URL. When a payment is made at the payment URL, the payment result will be redirected to the return_urls address. For example, return_url?id=2021031609283339501898843&status={0. In - progress, 1. Payment successful, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed}
 
-#####  return_url is our website url after complete the payment? 
+###  return_url is our website url after complete the payment? 
 YES
 
 
 
-##### The string must be https://payapi-sandbox.paycrypto.com/api/v1/payment?lang=e&return_url=https://www.milky-cat.com/eg/mcm/index.htm.en&currency=usd&amount=100.05&cust_oreder_id=1223
+### The string must be https://payapi-sandbox.paycrypto.com/api/v1/payment?lang=e&return_url=https://www.milky-cat.com/eg/mcm/index.htm.en&currency=usd&amount=100.05&cust_oreder_id=1223
 Could you give me an example string?
 
 No, Pls use POST, not GET.
 
-##### and what is this?  Access-Passphrase: {Your API Secret passphrase}
+### and what is this?  Access-Passphrase: {Your API Secret passphrase}
 The API password you created in https://merchants-sandbox.paycrypto.com/
 
 
@@ -709,7 +709,7 @@ Please send me your code so that I can help you confirm it. Thanks. pls send us 
 
 
 
-##### I can find now. Should I leave webhook? Or create both?
+### I can find now. Should I leave webhook? Or create both?
 It’s better to complete the API call first, then create the webhook
 
 And how to add more webhooks for the other website?
@@ -717,7 +717,7 @@ And how to add more webhooks for the other website?
 We support specifying the notify URL when creating a payment order. 
 
 
-##### We set up the test transaction. Please provide us the test card.
+### We set up the test transaction. Please provide us the test card.
 At the moment, the sandbox environment does not support test cards and only allows manual changes to the order status—either to success or failure.
 
 
@@ -731,7 +731,7 @@ Current testing procedure:
 4.Pls refresh the redirect_url page, and it will redirect to your store in few seconds.
 
 
-##### if I send the testcart url, can you test processing for example?
+### if I send the testcart url, can you test processing for example?
 
 If you’ve already integrated our Sandbox, I can help run tests using your testcart URL.
 
@@ -754,13 +754,13 @@ Pls Response in json:
 If your Sandbox environment has been successfully validated, you can also try real card payments in the Live environment.
 
 
-##### On the api docs, there are parameters 0-6 I guess, only success parameter will be back?
+### On the api docs, there are parameters 0-6 I guess, only success parameter will be back?
 Currently, you only need to take care of the successful status, which should be enough for now.
 
-##### Even different website, payment goes to same company name screen?
+### Even different website, payment goes to same company name screen?
  You can specify the company name 'company_name' when creating an order.
 
-##### When the payment succeeded, just webfook kick the url? No parameters be back ?
+### When the payment succeeded, just webfook kick the url? No parameters be back ?
 Here are our webhook parameters:
 {
     "id": "bc76488ddda4",
@@ -776,15 +776,15 @@ Here are our webhook parameters:
 
 
 
-##### And now this is manipulation,  when the real transaction is working,  this notification push webhook automatically?
+### And now this is manipulation,  when the real transaction is working,  this notification push webhook automatically?
 
 The notification push webhook automatically. If communication fails we try 5 times in total.
 
 
- ##### Then we'll install the other sites. Please add other webhooks at that time?
+### Then we'll install the other sites. Please add other webhooks at that time?
 Since you operate multiple sites, please fill different 'notify_url' values for each. We also recommend using unique order number prefixes to distinguish orders across sites.
 
 
- ##### I need example. URL or anything string for notify_url?  if it is webhook url, we don't need to set the url in webhook in developper screen?
+### I need example. URL or anything string for notify_url?  if it is webhook url, we don't need to set the url in webhook in developper screen?
  we prioritize the notify_url. If notify_url is not provided, we will use the url in webhook in developper screen.
 
