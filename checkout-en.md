@@ -635,6 +635,28 @@ Live: https://merchants.paycrypto.com/user/login
 4. Pls refresh the redirect_url page, and it will redirect to your store in few seconds.
 
 
+We set up the test transaction. Please provide us the test card?
+
+At the moment, the sandbox environment does not support test cards and only allows manual changes to the order status—either to success or failure.
+
+
+### integrate our SDK
+
+I'm new about SDKs then discuss about it with my IT guy. It looks other php or js we must create between cgi and payment api?
+
+Yes. Your IT guy integrate our SDK code that include payment api into your CGI program. Just refer to the SDK and modify the api credentials to your
+
+
+My IT guy tested sdk then error returned as 
+
+code:　112008
+msg:　app key invalid
+
+He asks why. Please let me know.
+
+Please send me your code so that I can help you confirm it. Thanks. pls send us your program code (I guess you use PHP ).
+
+
 ### How to create API key?
 
 ![](./imgs/create-apikey.jpeg)
@@ -657,13 +679,7 @@ Live environment：https://payapi.paycrypto.com
 The API service cannot be opened directly using a browser. After your engineers use PHP code to create an order, the order payment link can be opened using a browser, such as: https://pay-sandbox.paycrypto.com/?id=hm25042906295927997
 
 
-
-
-### How to create by GET url with parameters?
-
-
-Our cgi uses GET method, then I take a look GET part. Only php/ Js can make sandbox?  GET Payment Acceptance - Query Order Record by Order Number
-https://payapi-sandbox.paycrypto.com/api/v1/orders Query a single order record
+### How create payment order?
 
 Please refer to our Backend SDKs.
 
@@ -687,6 +703,17 @@ In response data, parameter 'redirect_url' is the order payment URL.
 The checkout API service will return the payment URL. When a payment is made at the payment URL, the payment result will be redirected to the return_urls address. For example, return_url?id=2021031609283339501898843&status={0. In - progress, 1. Payment successful, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed}
 
 
+### How to create by GET url with parameters?
+
+
+Our cgi uses GET method, then I take a look GET part. Only php/ Js can make sandbox?  GET Payment Acceptance - Query Order Record by Order Number
+https://payapi-sandbox.paycrypto.com/api/v1/orders Query a single order record
+
+Please refer to our Backend SDKs.
+
+
+
+
 
 
 ### what is this?  Access-Passphrase: {Your API Secret passphrase}
@@ -695,29 +722,14 @@ The API key password you created in https://merchants-sandbox.paycrypto.com/
 
 
 name= anything, whitelist IP= IP of our host server. API password= something ecrypto like but it will show online in POST.  right?
+
 Not show online, It is saved in your backend.
 
 
-I'm new about SDKs then discuss about it with my IT guy. It looks other php or js we must create between cgi and payment api?
-
-Yes. Your IT guy integrate our SDK code that include payment api into your CGI program. Just refer to the SDK and modify the api credentials to your
 
 
-My IT guy tested sdk then error returned as 
-
-code:　112008
-msg:　app key invalid
-
-He asks why. Please let me know.
-
-Please send me your code so that I can help you confirm it. Thanks. pls send us your program code (I guess you use PHP ).
 
 
-### We set up the test transaction. Please provide us the test card.
-At the moment, the sandbox environment does not support test cards and only allows manual changes to the order status—either to success or failure.
-
-
-I don't wanna use real card for testing as long as I don't know how to refund or cancel. Let me know the step to test transaction？
 
 
 ###  return_url is our website url after complete the payment? 
