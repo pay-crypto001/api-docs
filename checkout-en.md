@@ -254,6 +254,7 @@ Request：
 |return_url|	String	|Optional|	After the order is completed, whether successful or failed, the user will be redirected to this URL.|
 |notify_url|	String	|Optional|	Webhook URL. we will push order status changes to you.|
 |company_name|	String	|Optional|	The company name shown to users on the payment page.|
+|company_email |String|Optional| The company email for receive payment receipt |
 |expire|	long|	Optional|	Expiration time, in milliseconds. It is recommended not to fill it in. If not filled, it will expire 100 minutes after the start of payment by default.|
 |customer|	Object|	Optional|	Customer infomation|
 
