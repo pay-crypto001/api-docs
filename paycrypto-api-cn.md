@@ -30,6 +30,7 @@
      - [3.8 查询快递单号](#查询快递单号)
      - [3.9 升级双币种卡](#升级双币种卡)
      - [3.10 再次发送包含PIN码的邮件](#再次发送包含PIN码的邮件)
+     - [3.11 升级用户KYC](#升级用户KYC)
 - [4.充值卡](#充值卡)
      - [4.1 给用户卡充值](#给用户卡充值)
      - [4.2 固定到账法币金额](#用稳定币给用户卡充值-指定到账法币金额-)
@@ -818,6 +819,10 @@ method：GET
 | cust_tx_id | String | KYC流水号|
 |   status    |  int   | 状态码: 0 已提交， 1 认证通过(开卡成功)， 2 认证未通过， 3 认证中， 4 提交信息处理中 6 已退款|
 
+
+
+
+
 ## 开卡和激活
 
 提供机构给用户开卡，记录查询等接口。
@@ -1190,6 +1195,57 @@ method：POST
 | acct_no | String | 必填    |机构端用户编号(机构端唯一) |
 
 
+
+- 响应：
+
+```json
+{
+  "code": 0,
+  "msg": "string",
+  "result": true
+}
+```
+
+
+### 升级用户KYC
+
+用户已激活卡片后，升级用户KYC，提升用户卡权益。与第一次KYC相比多了一个card_no参数，其他一样。
+
+```text
+url：/api/v1/customers/accounts/upgrade
+method：POST
+```
+
+
+- 请求：
+
+| Parameter |  Type  |    Requirement  |Description   |
+| :------------: | :----: | :----------: |:---------- |
+|   card_no   | String |  必填 |        用户的卡ID          |
+|   acct_no | String | 必填 |机构端用户编号(机构端唯一)，字符长度最大64|
+|   acct_name | String |必填 |机构端用户名，字符长度最大64|
+|   first_name | String |必填 |真实用户名，字符长度最大50|
+|   last_name | String |必填 |真实用户姓，字符长度最大50|
+|   gender | String |必填 |male:男，female:女，unknown:其他，字符长度最大6|
+|   birthday | String |必填 |生日（生日格式为"1990-01-01"）|
+|   city | String |必填 |城市，字符长度最大100|
+|   state | String |必填 |省份，字符长度最大100|
+|   country | String |必填 |用户所在国家，字符长度最大50|
+|   nationality | String |必填 |国籍，字符长度最大255|
+| doc_no | String |必填 |证件号码，字符长度最大128|
+| doc_type | String |必填 |证件类型(目前只支持passport): passport: 护照，idcard：身份证，字符长度最大8|
+| front_doc | String |必填 |正面照。base64编码, 照片文件大小应小于2M|
+| back_doc | String |选填 |反面照，doc_type是idcard时必须填写。base64编码，照片文件大小应小于2M|
+| mix_doc | String |必填 |手持证件照。base64编码，照片文件大小应小于2M|
+|   country_code | String |必填 |手机国际区号，如“+86”。字符长度最大5|
+|   mobile | String |必填 |手机号，字符长度最大32|
+|  mail | String |必填 |邮箱，不支持163.com的邮箱。字符长度最大64|
+|   address | String |必填 |通讯地址，银行卡会寄到该地址。字符长度最大256|
+|   zipcode | String |必填 |邮编，字符长度最大20|
+|   maiden_name | String |必填 |妈妈的名字，字符长度最大255|
+| card_type_id |String |必填 |银行卡种类对应的id,比如 10010001|
+|   kyc_info | String |选填 |KYC 其他信息|
+| cust_tx_id | String | 选填| KYC流水号|
 
 - 响应：
 
