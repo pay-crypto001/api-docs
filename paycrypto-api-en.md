@@ -24,6 +24,7 @@
      * [3.6 Request Lock, Unlock, Lost, Renew PIN, Replacement card](#Request-Lock-Unlock-Lost-Renew-PIN-Replacement-card)
      * [3.7 Query Lock, Unlock, Lost, Renew PIN, Replacement card Status](#Query-Lock-Unlock-Lost-Renew-PIN-Replacement-card-Status)
      * [3.8 Query tracking number](#Query-tracking-number)
+     * [3.9 Upgrade KYC](#Upgrade-KYC)
 * [4.Transactions](#transactions)
      * [4.1 User deposit with stablecoin](#User-deposit-with-stablecoin)
      * [4.2 Fixed amount will be received in fiat](#User-deposit-with-stablecoin-Fixed-amount-will-be-received-in-fiat)
@@ -965,10 +966,68 @@ or
 | Parameter  |  Type  |             Description             |
 | :--------: | :----: | :------------------------------ |
 |   acct_no   | String |      Institution account name (Unique within scope of the institution)      |
-|   card_no   |  int   |              Bank card no.              |
+|   card_no   |  String   |              Bank card no.              |
 |   website    |  String   |  logistics company website |
 |   tracking_number    |  String   | tracking number of the package|
 | create_time |  long  |              create time               |
+
+
+
+### Upgrade KYC data
+
+After the user activates the card, upgrade their KYC to unlock enhanced card benefits. Compared to the initial KYC process, the only difference is the inclusion of the card_no parameter; all other details remain unchanged.
+
+- Request:
+
+
+```text
+url：/api/v1/customers/accounts/upgrade
+method：POST
+```
+
+
+|       Parameter        |  Type  | Whether Required |                                          Description                                          |
+| :--------------------: | :----: | :--------------: | :-------------------------------------------------------------------------------------------: |
+|   card_no              |  String   |      Required |         Bank card no.              |
+|        acct_no         | String |     Required     |         Account serial no. (Unique within the institution), Max. character length: 64         |
+|       acct_name        | String |     Required     |                      Institution account name, Max. character length: 64                      |
+|       first_name       | String |     Required     |                          Legal first name, Max. character length: 50                          |
+|       last_name        | String |     Required     |                          Legal last name, Max. character length: 50                           |
+|         gender         | String |     Required     |             male: Male，female: Female，unknown: other, Max. character length: 6              |
+|        birthday        | String |     Required     |                                    Birth date (YYYY-MM-DD)                                    |
+|          city          | String |     Required     |                               City, Max. character length: 100                                |
+|         state          | String |     Required     |                               State, Max. character length: 100                               |
+|        country         | String |     Required     |                              Country code, Max. character length: 50                               |
+|      nationality       | String |     Required     |                           Nationality code，, Max. character length: 255                           |
+|         doc_no         | String |     Required     |                                        Document number                                        |
+|        doc_type        | String |     Required     | Document type(Only support passport). passport：Passport，idcard：National ID card |
+|       front_doc        | String |     Required     |                              Front face picture. Base64 encoding. File size should be less than 2M  |
+|        back_doc        | String |     Optional     |                              Back face picture. Required if doc_type is idcard. Base64 encoding. File size should be less than 2M              |
+|        mix_doc         | String |     Required     |                            Photo with certificate in hand. Base64 encoding. File size should be less than 2M |
+|      country_code      | String |     Required     | International country code，for example "+86". Max. character length: 5 |
+|         mobile         | String |     Required     |                           Mobile number, Max. character length: 32                            |
+|          mail          | String |     Required     |                           Email address,don't support 163.com email host. Max. character length: 64                            |
+|        address         | String |     Required     |                          Postal address, the bank card will send tothis address. Max. character length: 256                           |
+|        zipcode         | String |     Required     |                              Zip code, Max. character length: 20                              |
+|      maiden_name       | String |     Required      |                        Your Mother name or put any relative Friend name, Max. character length: 255                         |
+| card_type_id |String |Required | Bank card type id, for example: 10010001|   
+|        kyc_info        | String |     Optional     |                                     Other KYC information                                     |
+| cust_tx_id            | String | Optional         | customer transaction id|
+| poa_doc | String[3] |Optional |Picture or PDF of proof of address(Currently not supported). Base64 encoding. Each file size should be less than 2M|
+
+
+- Response:
+
+```json
+{
+  "code": 0,
+  "msg": "string",
+  "result": true
+}
+```
+
+
+
 
 ## Transactions
 
