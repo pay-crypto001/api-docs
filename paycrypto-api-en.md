@@ -973,7 +973,7 @@ or
 
 
 
-### Upgrade KYC data
+### Upgrade KYC
 
 After the user activates the card, upgrade their KYC to unlock enhanced card benefits. Compared to the initial KYC process, the only difference is the inclusion of the card_no parameter; all other details remain unchanged.
 
