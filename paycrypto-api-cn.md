@@ -556,7 +556,7 @@ method：POST
 |  mail | String |必填 |邮箱，不支持163.com的邮箱。字符长度最大64|
 |   address | String |必填 |通讯地址，银行卡会寄到该地址。字符长度最大256|
 |   zipcode | String |必填 |邮编，字符长度最大20|
-|   maiden_name | String |必填 |妈妈的名字，字符长度最大255|
+|   maiden_name | String |必填 |妈妈的名字（可以填no），字符长度最大255|
 | card_type_id |String |必填 |银行卡种类对应的id,比如 10010001|
 |   kyc_info | String |选填 |KYC 其他信息|
 | mail_verification_code | String |选填 |邮箱验证码|
