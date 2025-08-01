@@ -335,6 +335,8 @@ Response：
 |order_id|	String	|Checkout order number|
 |status|	String	| Order status. 0. In processing, 1. Success, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed|
 |currency_rate|	String|	Currency rate|
+|customer|	Object|	customer's information|
+|company_email|	Object|	company email|
 |reason|	String	|Reasons for success, failure, etc.|
 |create_time|	String|	Creation time|
 |update_time|	String	|Update time|
@@ -370,6 +372,8 @@ Response: {
                     "cust_order_id": "1ec7b32b-0750-4308-b882-f00d45b4f712",
                     "currency_rate":"0",
                     "reason":"Approved",
+                    "customer": {},
+                    "company_email": "abc@gmail.com",
                     "status": 0,
                     "create_time": 1626418074000,
                     "update_time": 1626418074000
@@ -415,6 +419,8 @@ Response：
 |status	|String|	Order status. 0. In processing, 1. Success, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed|
 |currency_rate	|String	|Currency rate|
 |reason	|String	|Reasons for success, failure, etc.|
+|customer|	Object|	customer's information|
+|company_email|	Object|	company email|
 |create_time	|String|	Creation time|
 |update_time|	String	｜ Update time|
 
@@ -444,6 +450,8 @@ Response: {
                 "cust_order_id": "4e2ee23c-6521-41b6-9203-16cecf9dac48",
                 "status": 0,
                 "reason":"Approved",
+                "customer": {},
+                "company_email": "abc@gmail.com",
                 "create_time": 1626339048000,
                 "update_time": 1626339048000
             },
@@ -455,6 +463,8 @@ Response: {
                 "order_id": "20210716080455300000111",
                 "cust_order_id": "976e79b5-5c52-45a6-ac2b-cfee58894866",
                 "reason":"Approved",
+                "customer": {},
+                "company_email": "abc@gmail.com",
                 "status": 1,
                 "create_time": 1626314595000,
                 "update_time": 1626320164000
