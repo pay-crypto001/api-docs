@@ -336,7 +336,7 @@ Response：
 |status|	String	| Order status. 0. In processing, 1. Success, 2. Confirming, 3. Abnormal, 4. Failed, 5. Cancelled, 6. Order expired, 7. Refunding, 8. Refund successful, 9. Refund failed|
 |currency_rate|	String|	Currency rate|
 |customer|	Object|	customer's information|
-|company_email|	Object|	company email|
+|company_email|	String|	company email|
 |reason|	String	|Reasons for success, failure, etc.|
 |create_time|	String|	Creation time|
 |update_time|	String	|Update time|
@@ -420,7 +420,7 @@ Response：
 |currency_rate	|String	|Currency rate|
 |reason	|String	|Reasons for success, failure, etc.|
 |customer|	Object|	customer's information|
-|company_email|	Object|	company email|
+|company_email|	String|	company email|
 |create_time	|String|	Creation time|
 |update_time|	String	｜ Update time|
 
