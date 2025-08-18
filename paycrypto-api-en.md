@@ -25,7 +25,7 @@
      * [3.7 Query Lock, Unlock, Lost, Renew PIN, Replacement card Status](#Query-Lock-Unlock-Lost-Renew-PIN-Replacement-card-Status)
      * [3.8 Query tracking number](#Query-tracking-number)
      * [3.9 Upgrade KYC](#Upgrade-KYC)
-* [4.Transactions](#transactions)
+* [4.Top-up](#Top-up)
      * [4.1 User deposit with stablecoin](#User-deposit-with-stablecoin)
      * [4.2 Fixed amount will be received in fiat](#User-deposit-with-stablecoin-Fixed-amount-will-be-received-in-fiat)
      * [4.3 Query Exchange Price](Query-Exchange-Price)
@@ -1029,7 +1029,7 @@ method：POST
 
 
 
-## Transactions
+## Top-up
 
 ### User deposit with stablecoin
 
