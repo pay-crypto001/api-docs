@@ -2565,6 +2565,7 @@ method：POST
           "bank_tx_list": [
               {
                   "transaction_date": "20/11/2019",
+				  "reason":"",
                   "posting_date": "20/11/2019",
                   "tx_id": "54675678678",                  
                   "description": "MONTHLY FEE",
@@ -2579,6 +2580,7 @@ method：POST
               },
               {
                   "transaction_date": "28/11/2019",
+				  "reason":"",
                   "posting_date": "28/11/2019",
                   "tx_id": "54675678677",
                   "description": "MONTHLY FEE",
