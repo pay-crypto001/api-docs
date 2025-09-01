@@ -120,6 +120,7 @@ API 使用步骤：
 4. 机构登录，创建 Appkey 和 secret，可选择配置 webhook 回调地址。
 5. 调用 API 进行 KYC、开卡、激活卡、充值等操作，状态变更 Paycrypto 会通过回调地址通知机构服务器。
 
+![](./imgs/caas/workflow0.png)
 ![](./imgs/caas/workflow-cn.png)
 
 > 建议使用生产环境前先在测试环境调试。
