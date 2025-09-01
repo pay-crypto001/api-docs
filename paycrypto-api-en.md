@@ -674,6 +674,8 @@ This API contains methods related to
 
 ### Apply a card
 
+The card application result will be returned via the Card Apply Event Webhook.
+
 - Request:
 
 ```text
@@ -737,7 +739,13 @@ method：POST
 ```
 
 
-### User activating bank card
+### User activating card
+
+
+1. After successfully applying for a card, you need to activate it before use. Call the xx API with the **acct_no, card_no, and cvv** (required for physical cards) to complete the activation.
+
+2. The card activation result will be returned via the **Card Activation Event Webhook.**
+
 
 ```text
 url：/api/v1/debit-cards/status
