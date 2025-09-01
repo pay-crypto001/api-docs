@@ -88,6 +88,10 @@ API usage steps are as follows:
 4. Create Appkey and secret, and optionally configure webhook callback address.
 5. Call the API for KYC, card opening, card activation, deposit and other operations. Paycrypto will notify through the callback address when the status changes.
 
+
+![](./imgs/caas/workflow.png)
+
+
 > It is recommended to testing in the test environment before using the production environment.
 
 Dashboard :
