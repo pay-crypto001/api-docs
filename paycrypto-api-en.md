@@ -2,6 +2,7 @@
 
 * [Paycrypto API](#Paycrypto-API)
 * [API Specifications](#API-Specifications)
+* [FAQ (Frequently Asked Questions)](./paycrypto-api-FAQ.md)
 * [1.Institution](#Institution)
      * [1.1 Query Card type](#Query-Card-type)
      * [1.2 Query customer balance](#Query-customer-balance)
