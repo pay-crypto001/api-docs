@@ -531,6 +531,7 @@ method：POST
 | sign_img | String | Optional| hand signature image. Base64 encoding. File size should be less than 1M |
 | poa_doc | String[3] |Optional |Picture or PDF of proof of address(Currently not supported). Base64 encoding. Each file size should be less than 2M|
 | card_number | String |Optional | only support for special cards. sell card to the user first then user to do KYC|
+| print_name_on_card | String |Optional | only support for special cards. Specifies whether the cardholder's name should be printed on the card. |
 
 - Response:
 
