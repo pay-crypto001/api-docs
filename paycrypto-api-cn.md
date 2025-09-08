@@ -32,6 +32,7 @@
      - [3.9 升级双币种卡](#升级双币种卡)
      - [3.10 再次发送包含PIN码的邮件](#再次发送包含PIN码的邮件)
      - [3.11 升级用户KYC](#升级用户KYC)
+     - [3.12 查未分配卡是否存在](#查未分配卡是否存在)
 - [4.充值卡](#充值卡)
      - [4.1 给用户卡充值](#给用户卡充值)
      - [4.2 固定到账法币金额](#用稳定币给用户卡充值-指定到账法币金额-)
@@ -1261,6 +1262,46 @@ method：POST
   "result": true
 }
 ```
+
+
+
+
+
+### 查未分配卡是否存在
+
+
+
+```text
+url：/api/v1/debit-cards/exist?card_number={card_number}
+method：GET
+```
+
+
+| Parameter |  Type  |   Requirement  |     Description         |
+| :------------: | :----: | :----------: |:---------- |
+|    card_number     | String |      必填    | 卡号          |
+
+
+- 响应：
+
+```json
+{
+  "code": 0,
+  "msg": "string",
+  "result": {
+        "card_type_id": "30000001",
+        "card_number": "4385211202597301",
+  }
+}
+```
+
+| Parameter  |  Type  |             Description             |
+| :--------: | :----: | :------------------------------ |
+|   card_number   |  int   |              卡号               |
+|   card_type_id    |  String   | 卡类型ID|
+
+
+
 
 ## 充值卡
 
