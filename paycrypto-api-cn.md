@@ -221,6 +221,11 @@ url：/api/v1/institution/card/type
 method：GET
 ```
 
+| Parameter  | Type |Requirement  | Description |
+| :------------: | :----: | :----------: |:---------- |
+|  page_num   | int  |    选填|页数     |
+|  page_size  | int  |  选填|页的大小   |
+
 - 响应:
 
 ```json
