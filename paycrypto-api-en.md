@@ -188,6 +188,11 @@ url：/api/v1/institution/card/type
 method：GET
 ```
 
+|    Parameter    | Type  | Whether Required |                        Description                         |
+| :---------: | :---: | :--------------: | :--------------------------------------------------------: |
+|  page_num   |  int  |     Optional     |                        Page number                         |
+|  page_size  |  int  |     Optional     |                         Page size                          |
+
 - Response:
 
 ```json
