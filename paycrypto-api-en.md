@@ -1507,7 +1507,8 @@ method：POST
                   "debit": "2.50",
                   "debit_usd": "2.50",                  
                   "credit": "",
-                  "credit_usd": "", 
+                  "credit_usd": "",
+				  "transaction_time": 1757570339000,
                   "fee": "0",
                   "end_bal": "end_bal", 
                   "origin_transaction_id": "",               
@@ -1521,7 +1522,8 @@ method：POST
                   "debit": "2.50",
                   "debit_usd": "2.50",                  
                   "credit": "",
-                  "credit_usd": "", 
+                  "credit_usd": "",
+				  "transaction_time": 1757570339000,
                   "fee": "0",
                   "end_bal": "end_bal", 
                   "origin_transaction_id": "",   
@@ -1545,6 +1547,7 @@ method：POST
 |        available_balance_usd         | String | Usable balance(USD)                                                     |
 |         bank_tx_list[n]          | Object | Transaction list                                                   |
 | bank_tx_list[0].transaction_date | String | Transaction date                                                   |
+| bank_tx_list[0].transaction_time | long | Transaction time                                                   |
 |   bank_tx_list[0].posting_date   | String | Transaction record submission date                                 |
 |   bank_tx_list[0].tx_id   | String | Transaction ID                                 |
 |   bank_tx_list[0].description    | String | Description                                                        |
