@@ -2664,7 +2664,7 @@ method：POST
 |   available_balance_usd   | String | 可用余额(USD)  |
 |   bank_tx_list[n]   | Object | 交易列表  |
 |   bank_tx_list[0].transaction_date   | String | 交易日期  |
-|   bank_tx_list[0].transaction_time | String | 交易时间的时间戳  |
+|   bank_tx_list[0].transaction_time | long | 交易日期的时间戳  |
 |   bank_tx_list[0].posting_date   | String | 交易提交日期  |
 |   bank_tx_list[0].tx_id   | String | 交易ID |
 |   bank_tx_list[0].description   | String | 描述  |
