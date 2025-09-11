@@ -3277,7 +3277,7 @@ events 数组元素从 string 转成 json:
 | --- | --- |--- |
 | action|String  | card-status |
 | events[n].params.card_no |String | 卡ID |
-| events[n].params.status |int | 卡激活状态, 0.冻结, 1.卡激活成功, 4.卡激活审核失败 |
+| events[n].params.status |int | 卡激活状态,1.卡激活成功 |
 
 示例：
 ```
