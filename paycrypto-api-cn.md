@@ -2624,6 +2624,7 @@ method：POST
                   "debit_usd": "2.50",
                   "credit": "",
                   "credit_usd": "",
+				  "transaction_time": 1757570339000,
                   "fee": "0",
                   "end_bal": "end_bal", //如果是0，代表没交易后余额
                   "origin_transaction_id": "",
@@ -2639,6 +2640,7 @@ method：POST
                   "debit_usd": "2.50",
                   "credit": "",
                   "credit_usd": "",
+				  "transaction_time": 1757570339000,
                   "fee": "0",
                   "end_bal": "end_bal", //如果是0，代表没交易后余额
                   "origin_transaction_id": "",
@@ -2662,6 +2664,7 @@ method：POST
 |   available_balance_usd   | String | 可用余额(USD)  |
 |   bank_tx_list[n]   | Object | 交易列表  |
 |   bank_tx_list[0].transaction_date   | String | 交易日期  |
+|   bank_tx_list[0].transaction_time | long | 交易日期的时间戳  |
 |   bank_tx_list[0].posting_date   | String | 交易提交日期  |
 |   bank_tx_list[0].tx_id   | String | 交易ID |
 |   bank_tx_list[0].description   | String | 描述  |
@@ -2676,6 +2679,7 @@ method：POST
 |   bank_tx_list[0].tx_amount   | String | 实际交易货币的交易金额  |
 |   bank_tx_list[0].end_bal   | String | 交易后余额。如果是0，代表没交易后余额  |
 |   bank_tx_list[0].origin_transaction_id | String | 原消费交易id，退款交易才可能有值  |
+
 
 ### 查询卡敏感信息
 
