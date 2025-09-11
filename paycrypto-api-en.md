@@ -1924,7 +1924,7 @@ events[n] element convert string to json:
 | --- | --- |--- |
 | action|String  | card-status |
 | events[n].params.card_no |String | Institution account name (Unique within scope of the institution) |
-| events[n].params.status |int | Card activation status, 0.Frozen, 1.Activated successfully, 4.Activation Failure |
+| events[n].params.status |int | Card activation status, 1.Activated successfully |
 
 Event example:
 ```
