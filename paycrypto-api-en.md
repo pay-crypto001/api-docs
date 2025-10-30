@@ -527,16 +527,16 @@ method：POST
 |          mail          | String |     Required     |                           Email address,don't support 163.com email host. Max. character length: 64                            |
 |        address         | String |     Required     |                          Postal address, the bank card will send tothis address. Max. character length: 256                           |
 |        zipcode         | String |     Required     |                              Zip code, Max. character length: 20                              |
-|      maiden_name       | String |     Required      |                        Your Mother name or put any relative Friend name, Max. character length: 255                         |
 | card_type_id |String |Required | Bank card type id, for example: 10010001|   
+|      maiden_name       | String |     Optional      |                        Your Mother name or put any relative Friend name, Max. character length: 255                         |
 |        kyc_info        | String |     Optional     |                                     Other KYC information                                     |
 | mail_verification_code | String |     Optional     |                                    Email verification code                                    |
 |       mail_token       | String |     Optional     |                        Token returned upon sending verification Email                         |
 | cust_tx_id            | String | Optional         | customer transaction id|
 | sign_img | String | Optional| hand signature image. Base64 encoding. File size should be less than 1M |
 | poa_doc | String[3] |Optional |Picture or PDF of proof of address(Currently not supported). Base64 encoding. Each file size should be less than 2M|
-| card_number | String |Optional | only support for special cards. sell card to the user first then user to do KYC|
-| print_name_on_card | String |Optional | only support for special cards. Specifies whether the cardholder's name should be printed on the card. |
+| card_number | String |Optional | only support for special cards. sell card to the user first then user to do KYC. If this is a native physical card, this value is required        |
+| print_name_on_card | String |Optional | only support for special cards. Specifies whether the cardholder's name should be printed on the card. If this is a native physical card, this value is required  |
 
 - Response:
 
