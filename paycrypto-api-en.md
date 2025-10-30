@@ -533,11 +533,10 @@ method：POST
 | mail_verification_code | String |     Optional     |                                    Email verification code                                    |
 |       mail_token       | String |     Optional     |                        Token returned upon sending verification Email                         |
 | cust_tx_id            | String | Optional         | customer transaction id|
-| card_number | String |Optional | only support for special cards. sell card to the user first then user to do KYC. If this is a native physical card, this value is required        |
-| print_name_on_card | String |Optional | only support for special cards. Specifies whether the cardholder's name should be printed on the card. If this is a native physical card, this value is required  |
 | sign_img | String | Optional| hand signature image. Base64 encoding. File size should be less than 1M |
 | poa_doc | String[3] |Optional |Picture or PDF of proof of address(Currently not supported). Base64 encoding. Each file size should be less than 2M|
-
+| card_number | String |Optional | only support for special cards. sell card to the user first then user to do KYC. If this is a native physical card, this value is required        |
+| print_name_on_card | String |Optional | only support for special cards. Specifies whether the cardholder's name should be printed on the card. If this is a native physical card, this value is required  |
 
 - Response:
 
