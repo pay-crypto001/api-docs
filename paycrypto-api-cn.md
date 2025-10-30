@@ -567,8 +567,6 @@ method：POST
 |   address | String |必填 |通讯地址，银行卡会寄到该地址。字符长度最大256|
 |   zipcode | String |必填 |邮编，字符长度最大20|
 | card_type_id |String |必填 |银行卡种类对应的id,比如 10010001|
-| card_number | String | 选填| 绑卡卡号，用于提前售卡，J卡或Native实体卡必填|
-| print_name_on_card | Bool | 选填| 是否印名，Native实体卡必填|
 |   maiden_name | String |选填 |妈妈的名字（可以填no），字符长度最大255|
 |   kyc_info | String |选填 |KYC 其他信息|
 | mail_verification_code | String |选填 |邮箱验证码|
@@ -576,7 +574,8 @@ method：POST
 | cust_tx_id | String | 选填| KYC流水号|
 | sign_img | String | 选填| 签名照片。base64编码，照片文件大小应小于1M|
 | poa_doc | String[3] |选填 |地址证明照片（暂不支持）。base64编码，照片或PDF文件每个文件大小应小于2M|
-
+| card_number | String | 选填| 特殊卡种支持，绑卡卡号，用于提前售卡，Native实体卡必填|
+| print_name_on_card | Bool | 选填| 是否印名，Native实体卡必填|
 
 - 响应：
 
