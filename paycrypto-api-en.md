@@ -16,6 +16,9 @@
 	 * [2.2 Submitting user KYC attachment (optional)](#Submitting-user-KYC-attachment-optional)
      * [2.3 Query all KYC records](#Query-all-KYC-records)
      * [2.4 Query a specific user KYC records](#Query-a-specific-user-KYC-records)
+     * [2.5 更新用户 KYC_info 信息（可选）](#更新用户-KYC-信息)
+     * [2.6 更新用户账单地址信息](#更新用户地址信息)
+     * [2.7 查询指定用户 KYC 信息](#查询指定用户-KYC-信息)
 * [3.Cards](#cards)
      * [3.1 Apply a card](#Apply-a-card)
      * [3.2 Submit active card attachment](#submit-active-card-attachment)
@@ -25,7 +28,9 @@
      * [3.6 Request Lock, Unlock, Lost, Renew PIN, Replacement card](#Request-Lock-Unlock-Lost-Renew-PIN-Replacement-card)
      * [3.7 Query Lock, Unlock, Lost, Renew PIN, Replacement card Status](#Query-Lock-Unlock-Lost-Renew-PIN-Replacement-card-Status)
      * [3.8 Query tracking number](#Query-tracking-number)
-     * [3.9 Upgrade KYC](#Upgrade-KYC)
+     * [3.9 升级双币种卡](#升级双币种卡)
+     * [3.10 再次发送包含PIN码的邮件](#再次发送包含PIN码的邮件)
+     * [3.11 Upgrade KYC](#Upgrade-KYC)
 * [4.Top-up](#Top-up)
      * [4.1 User deposit with stablecoin](#User-deposit-with-stablecoin)
      * [4.2 Fixed amount will be received in fiat](#User-deposit-with-stablecoin-Fixed-amount-will-be-received-in-fiat)
@@ -33,14 +38,22 @@
      * [4.4 Query a deposit transaction status](#Query-a-deposit-transaction-status)
      * [4.5 Query all the deposit records](#Query-all-the-deposit-records)
      * [4.6 Query a particular user deposit records](#Query-a-particular-user-deposit-records)
+     * [4.7 兑换USDT](#兑换USDT)  
+     * [4.8 查用户兑换记录](#查用户兑换记录)
 * [5.Bank](#bank)
      * [5.1 Query card status](#Query-card-status)
      * [5.2 Query account balance](#Query-account-balance)
      * [5.3 Query transaction records](#Query-transaction-records)
      * [5.4 Query card information](#Query-card-information)
      * [5.5 User triggers a card withdrawal password reset Email (Currently not supported)](#User-triggers-a-card-withdrawal-password-reset-Email-(Currently-not-supported))
+     * [5.6 查询卡已授权交易](#查询卡已授权交易)
+     * [5.7 信用卡月限额修改](#信用卡月限额修改)
+     * [5.8 查询信用卡月限额](#查询信用卡月限额)
      * [5.9 Freeze](#Freeze)
      * [5.10 Unfreeze](#Unfreeze)
+     * [5.11 实体卡初始化密码](#实体卡初始化密码)
+     * [5.12 实体卡更新密码](#实体卡更新密码)
+     * [5.13 实体卡重置密码](#实体卡重置密码)
 * [6.Verification Code API](#Verification-Code-API)
      * [6.1 Sending Email verification code](#Sending-Email-verification-code)
      * [6.2 Email verification code validation](#Email-verification-code-validation)
@@ -638,9 +651,12 @@ method：GET
 
 |  Parameter  |  Type  | Whether Required | Description                                                |
 | :---------: | :----: | :------------:  | :--------------------------------------------------------- |
-|   acct_no   | String | Required | User's unique institutional ID                             |
+|   acct_no   | String | Required | User's unique institutional ID
+|  page_num   | int  |    选填|页数     |
+|  page_size  | int  |  选填|页的大小   |                             |
 | former_time |  long  | Optional | Time period upper limit, `UNIX` timestamp, Unit: `seconds` |
 | latter_time |  long  | Optional | Time period lower limit, `UNIX` timestamp, Unit: `seconds` |
+| time_sort | String | 选填|时间排序, asc为升序，desc为降序   |
 
 - Response:
 
@@ -673,6 +689,118 @@ method：GET
 | create_time |  long   |                                                   Creation time                                                    |
 
 > KYC failure reason please see "KYC Failure Error Codes"
+
+### 更新用户 KYC_info 信息（可选）
+
+```text
+url：/api/v1/customers/accounts
+method：PUT
+```
+
+- 请求：
+
+| Parameter  | Type |Requirement  | Description |
+| :------------: | :----: | :----------: |:---------- |
+|    acct_no     | String | 必填|机构用户的唯一id号 |
+|  kyc_info   | String  |    必填|kyc_info     |
+
+- 响应：
+
+```json
+{
+  "code": 0,
+  "msg": "SUCCESS",
+  "result": true
+}
+```
+
+
+### 更新用户账单地址信息
+
+```text
+url：/api/v1/customers/accounts/address
+method：PUT
+```
+
+- 请求：
+
+| Parameter  | Type |Requirement  | Description |
+| :------------: | :----: | :----------: |:---------- |
+|    acct_no     | String | 必填|机构用户的唯一id号 |
+|   mobile | String |必填 |手机号，字符长度最大32|
+| country_code|	String|	必填|	手机国际区号，如“+86”。字符长度最大5|
+|   country | String |必填 |用户所在国家两位国家码，字符长度最大50|
+|   state | String |必填 |省份，如果是美国填两位州码，字符长度最大100|
+|   city | String |必填 |城市，字符长度最大100|
+|   address | String |必填 |通讯地址，银行卡会寄到该地址。字符长度最大256|
+|   zipcode | String |必填 |邮编，字符长度最大20|
+
+- 响应：
+
+```json
+{
+  "code": 0,
+  "msg": "SUCCESS",
+  "result": true
+}
+```
+
+### 查询指定用户 KYC 信息
+
+```text
+url：/api/v1/customers/accounts/kyc
+method：GET
+```
+
+- 请求：
+
+| Parameter  | Type |Requirement  | Description |
+| :------------: | :----: | :----------: |:---------- |
+|    acct_no     | String | 必填|机构用户的唯一id号 |
+
+- 响应：
+
+```
+{
+  "code": 0,
+  "msg": "SUCCESS",
+  "result": {
+    "total": 1,
+    "records": [
+      {
+        "acct_no": "1222",
+        ......
+      }
+    ]
+  }
+}
+```
+
+| Parameter |  Type    |Description   |
+| :------------: | :----:  |:---------- |
+|   acct_no | String | 机构端用户编号(机构端唯一)，字符长度最大64位|
+|   acct_name | String  |机构端用户名，字符长度最大64位|
+|   first_name | String  |真实用户名，字符长度最大50位|
+|   last_name | String  |真实用户姓，字符长度最大50位|
+|   gender | String  |male:男，female:女，unknown:其他，字符长度最大6位|
+|   birthday | String  |生日（生日格式为"1990-01-01"）|
+|   city | String  |城市，字符长度最大100位|
+|   state | String  |省份，字符长度最大100位|
+|   country | String  |用户所在国家，字符长度最大50位|
+|   nationality | String  |国籍，字符长度最大255位|
+| doc_no | String  |证件号码，字符长度最大128位|
+| doc_type | String  |证件类型(目前只支持passport): passport: 护照，idcard：身份证，字符长度最大8位|
+|   country_code | String |手机国际区号，如“+86”。字符长度最大5位|
+|   mobile | String  |手机号，字符长度最大32位|
+|  mail | String  |邮箱，不支持163.com的邮箱。字符长度最大64位|
+|   address | String  |通讯地址，银行卡会寄到该地址。字符长度最大256位|
+|   zipcode | String  |邮编，字符长度最大20位|
+|   maiden_name | String  |妈妈的名字，字符长度最大255位|
+| card_type_id |String  |银行卡种类对应的id,比如 10010001|
+|   kyc_info | text  |KYC 其他信息|
+| cust_tx_id | String | KYC流水号|
+|   status    |  int   | 状态码: 0 已提交， 1 认证通过(开卡成功)， 2 认证未通过， 3 认证中， 4 提交信息处理中 6 已退款|
+
 
 ## Cards
 
@@ -1045,6 +1173,57 @@ method：POST
 }
 ```
 
+### 升级双币种卡
+
+```text
+url：/api/v1/debit-cards/upgrade
+method：POST
+```
+
+- 请求
+
+| Parameter |  Type  |   Requirement  |     Description         |
+| :------------: | :----: | :----------: |:---------- |
+|    card_no     | String |      必填    |银行卡ID          |
+| acct_no | String | 必填    |机构端用户编号(机构端唯一) |
+
+
+
+- 响应：
+
+```json
+{
+  "code": 0,
+  "msg": "string",
+  "result": true
+}
+```
+
+### 再次发送包含PIN码的邮件
+
+```text
+url：/api/v1/debit-cards/resendemail
+method：POST
+```
+
+- 请求
+
+| Parameter |  Type  |   Requirement  |     Description         |
+| :------------: | :----: | :----------: |:---------- |
+|    card_no     | String |      必填    |银行卡ID          |
+| acct_no | String | 必填    |机构端用户编号(机构端唯一) |
+
+
+
+- 响应：
+
+```json
+{
+  "code": 0,
+  "msg": "string",
+  "result": true
+}
+```
 
 
 
@@ -1398,6 +1577,130 @@ method：GET
 |   coin_price      | String | coin_type/USD rate  |
 
 
+### 兑换USDT
+
+```text
+url：/api/v1/exchange-transactions
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description                |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String | 必填|银行卡ID                   |
+|     acct_no     | String | 必填|机构端用户编号(机构端唯一) |
+|     currency_amount      | String | 必填|法币金额         |
+|   cust_tx_id    | String | 必填|机构的交易流水号           |
+|     remark     | String | 选填|交易备注                   |
+|   card_currency | String | 选填|卡币种，双币种卡才需要填写     |
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": {
+        "cust_tx_id": "1223",
+        "acct_no": "03030062",
+        "card_no": "8993152800000013334",
+        "cust_tx_time": 1584350913000,
+        "tx_id": "2020031609283339501898843",
+        "coin_type": "USDT",
+        "coin_amount": "59.4",
+        "exchange_fee": "0",
+        "currency_type": "USD",
+        "currency_amount": "60",
+        "exchange_rate": "1",
+        "tx_status": 1
+    }
+}
+```
+
+| Parameter |  Type    | Description |
+| :------------: | :----------: |:---------- |
+|  cust_tx_id   | String |         机构流水号         |
+|    acct_no    | String | 机构端用户编号(机构端唯一) |
+|    card_no    |  String   |          银行卡ID         |
+|  cust_tx_time  |  long  |          创建时间          |
+|  tx_id   | String |        交易id         |
+|    coin_type    |  int   |          购买币种          |
+|   coin_amount   | String |          收到的金额          |
+|  exchange_fee   | String |     充值币种兑换成USDT的费用，单位是 ```coin_type```    |
+|     currency_type      | String | 法币类型  |
+|     currency_amount      | String | 法币金额  |
+| exchange_rate | String |            USDT/USD汇率            |
+|  tx_status   | int |   交易状态。0:待处理中，1:兑换成功，2充值失败        |
+| reason | String |           原因         |
+
+### 查用户兑换记录
+
+```text
+url：/api/v1/exchange-transactions?acct_no={acct_no}&card_no={card_no}
+method：GET
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|    acct_no     | String | 必填|机构用户的唯一id号 |
+|     card_no     | String | 必填|银行卡ID                   |
+|     tx_id      | String | 必填| 交易流水 tx_id 或 cust_tx_id  |
+|  page_num   | int  |    选填|页数     |
+|  page_size  | int  |  选填|页的大小   |
+| former_time | long |  选填|前置时间, UNIX 时间戳，`秒为单位`   |
+| latter_time | long |  选填|后置时间, UNIX 时间戳，`秒为单位`   |
+| time_sort | String | 选填|时间排序, asc为正序，desc为反序   |
+
+
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": {
+        "total": 1,
+        "records": [
+            {
+                "cust_tx_id": "1223",
+                "acct_no": "03030062",
+                "card_no": "8993152800000013334",
+                "cust_tx_time": 1584350913000,
+                "tx_id": "2020031609283339501898843",
+                "coin_type": "USDT",
+                "coin_amount": "59.4",     
+                "exchange_fee": "0",
+                "currency_type": "USD",                
+                "currency_amount": "60",
+                "exchange_rate": "1",
+                "tx_status": 1,
+                "reason": ""
+            }
+        ]
+    }
+}
+```
+
+|  Parameter   |  Type  |        Description         |
+| :--------: | :----: | :------------------------------ |
+|  cust_tx_id   | String |         机构流水号         |
+|    acct_no    | String | 机构端用户编号(机构端唯一) |
+|    card_no    |  String   |          银行卡ID         |
+|  cust_tx_time  |  long  |          创建时间          |
+|  tx_id   | String |        交易id         |
+|    coin_type    |  int   |          购买币种          |
+|   coin_amount   | String |          兑换到的金额          |
+|  exchange_fee   | String |     充值币种兑换成USDT的费用，单位是 ```coin_type```    |
+|     currency_type      | String | 法币类型  |
+|     currency_amount      | String | 法币数量  |
+| exchange_rate | String |            USDT/USD汇率            |
+|  tx_status   | int |   交易状态。0:待处理中，1:兑换成功，2充值失败        |
+| reason | String |           原因         |
+
 
 ## Bank
 
@@ -1479,8 +1782,10 @@ method：POST
 |     Parameter     |  Type  | Whether Required | Description                                 |
 | :---------------: | :----: | :--------------: | :------------------------------------------ |
 |      card_no      | String |     Required     | Card ID                                 |
+|   card_currency | String | 选填|卡币种，双币种卡才需要填写     |
 | former_month_year | String |     Required     | Period upper limit month (Format: `012020`) |
 | latter_month_year | String |     Required     | Period lower limit month (Format: `012020`) |
+|   tx_id | String | 选填|tx_id，交易ID     |
 
 - Response:
 
@@ -1501,6 +1806,7 @@ method：POST
           "bank_tx_list": [
               {
                   "transaction_date": "20/11/2019",
+				  "reason":"",
                   "posting_date": "20/11/2019",
                   "tx_id": "54675678678",
                   "description": "MONTHLY FEE",
@@ -1516,6 +1822,7 @@ method：POST
               },
               {
                   "transaction_date": "28/11/2019",
+				  "reason":"",
                   "posting_date": "28/11/2019",
                   "tx_id": "54675678677",
                   "description": "MONTHLY FEE",
@@ -1557,6 +1864,7 @@ method：POST
 |      bank_tx_list[0].credit_usd      | String | Credit amount(USD)                                                      |
 |   bank_tx_list[0].fee   | String | fee  |
 |       bank_tx_list[0].type       |  int   | Transaction type, 1. Debit, 2. Deposit, 3. Withdrawal, 4. Transfer in, 5. Transfer out, 6. other  7. Settlement Adjustment  8. refund 9.transaction fail 10.verification transaction 11.void |
+|   bank_tx_list[0].reason   | String | 交易失败原因  |
 |   bank_tx_list[0].tx_currency   | String | Actual transaction currency  |
 |   bank_tx_list[0].tx_amount   | String | Transaction amount of actual transaction currency  |
 |   bank_tx_list[0].end_bal   | String |   |
@@ -1644,6 +1952,154 @@ method：POST
 }
 ```
 
+
+### 查询卡已授权交易
+
+```text
+url：/api/v1/bank/authorizedtransaction
+method：GET
+```
+
+注意只有部分卡，PT和PH卡能查到已预授权的交易
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String | 必填|银行卡ID |
+
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": [
+              {
+                  "transaction_date": "20/11/2019",
+                  "posting_date": "20/11/2019",
+                  "tx_id": "54675678678",                  
+                  "description": "MONTHLY FEE",
+                  "debit": "2.50",
+                  "debit_usd": "2.50",
+                  "credit": "",
+                  "credit_usd": "",
+                  "fee": "0"
+              },
+              {
+                  "transaction_date": "28/11/2019",
+                  "posting_date": "28/11/2019",
+                  "tx_id": "54675678677",
+                  "description": "MONTHLY FEE",
+                  "debit": "2.50",
+                  "debit_usd": "2.50",
+                  "credit": "",
+                  "credit_usd": "",
+                  "fee": "0"
+              }
+    ]
+ }   
+```
+
+| Parameter |  Type  |          Description          |
+| :--------: | :----: | :------------------------------ |
+|   transaction_date   | String | 交易日期  |
+|   posting_date   | String | 交易提交日期  |
+|   tx_id   | String | 交易ID |
+|   description   | String | 描述  |
+|   debit   | String | 消费金额(卡支持的货币)  |
+|   debit_usd   | String | 消费金额(USD)  |
+|   credit   | String | 存入金额(卡支持的货币)   |
+|   credit_usd   | String | 存入金额(USD)  |
+|   fee   | String | 手续费，只有部分卡有值。  |
+|   tx_currency   | String | 实际交易货币  |
+|   tx_amount   | String | 实际交易货币的交易金额  |
+
+
+
+### 信用卡月限额修改
+
+```text
+url：/api/v1/bank/cardlimit
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |必填| 银行卡ID |
+|   max_amount_single   | String | 必填|     当笔限额          |
+|   max_amount_daily   | String | 必填|     日限额           |
+|   max_amount_monthly   | String |  必填| 月限额           |
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": {
+        "card_no": "438521******2001",
+        "card_type": "60000001",
+        "max_amount_single": "1000",
+        "max_amount_daily": "2000",
+        "max_amount_monthly": "100000",
+        "available_balance": "100",
+    }
+}
+```
+
+| Parameter |  Type  |          Description          |
+| :--------: | :----: | :------------------------------ |
+|   card_no   | String |         银行卡ID           |
+|   card_type   | String |         银行卡类型           |
+|   max_amount_single   | String |      当笔限额          |
+|   max_amount_daily   | String |      日限额           |
+|   max_amount_monthly   | String |   月限额           |
+|   available_balance   | String |   可用余额           |
+
+### 查询信用卡月限额
+
+```text
+url：/api/v1/bank/cardlimit
+method：GET
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |必填| 银行卡ID |
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": {
+        "card_no": "438521******2001",
+        "card_type": "60000001",
+        "max_amount_single": "1000",
+        "max_amount_daily": "2000",
+        "max_amount_monthly": "100000",
+        "available_balance": "100",
+    }
+}
+```
+
+| Parameter |  Type  |          Description          |
+| :--------: | :----: | :------------------------------ |
+|   card_no   | String |         银行卡ID           |
+|   card_type   | String |         银行卡类型           |
+|   max_amount_single   | String |      当笔限额          |
+|   max_amount_daily   | String |      日限额           |
+|   max_amount_monthly   | String |   月限额           |
+|   available_balance   | String |   可用余额           |
+
+
 ### freeze
 
 ```text
@@ -1688,6 +2144,83 @@ method：POST
     "code": 0,
     "msg": "SUCCESS",
     "result": {}
+}
+```
+
+
+### 实体卡初始化密码
+
+```text
+url：/api/v1/bank/initpassword
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |必填| 银行卡ID |
+|     pin     | String |必填|  |
+|     confirm_pin     | String |必填|  |
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": true
+}
+```
+
+### 实体卡更新密码
+
+```text
+url：/api/v1/bank/updatepassword
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |必填| 银行卡ID |
+|     new_pin     | String |必填|  ｜
+|     old_pin     | String |必填|  ｜
+
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": true
+}
+```
+
+### 实体卡重置密码
+
+```text
+url：/api/v1/bank/resetpassword
+method：POST
+```
+
+- 请求：
+
+| Parameter |  Type  | Requirement  |Description |
+| :------------: | :----: | :----------: |:---------- |
+|     card_no     | String |必填| 银行卡ID |
+|     pin     | String |必填|  |
+|     confirm_pin     | String |必填|  |
+
+- 响应：
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": true
 }
 ```
 
