@@ -221,6 +221,11 @@ url：/api/v1/institution/card/type
 method：GET
 ```
 
+| Parameter  | Type |Requirement  | Description |
+| :------------: | :----: | :----------: |:---------- |
+|  page_num   | int  |    选填|页数     |
+|  page_size  | int  |  选填|页的大小   |
+
 - 响应:
 
 ```json
@@ -561,16 +566,16 @@ method：POST
 |  mail | String |必填 |邮箱，不支持163.com的邮箱。字符长度最大64|
 |   address | String |必填 |通讯地址，银行卡会寄到该地址。字符长度最大256|
 |   zipcode | String |必填 |邮编，字符长度最大20|
-|   maiden_name | String |必填 |妈妈的名字（可以填no），字符长度最大255|
 | card_type_id |String |必填 |银行卡种类对应的id,比如 10010001|
+|   maiden_name | String |选填 |妈妈的名字（可以填no），字符长度最大255|
 |   kyc_info | String |选填 |KYC 其他信息|
 | mail_verification_code | String |选填 |邮箱验证码|
 | mail_token | String |选填|发送邮件后返回的token|
 | cust_tx_id | String | 选填| KYC流水号|
 | sign_img | String | 选填| 签名照片。base64编码，照片文件大小应小于1M|
 | poa_doc | String[3] |选填 |地址证明照片（暂不支持）。base64编码，照片或PDF文件每个文件大小应小于2M|
-| card_number | String | 选填| 绑卡卡号，用于提前售卡，只支持J卡|
-| print_name_on_card | Bool | 选填| 是否印名，部分卡种支持|
+| card_number | String | 选填| 特殊卡种支持，绑卡卡号，用于提前售卡，Native实体卡必填|
+| print_name_on_card | Bool | 选填| 是否印名，Native实体卡必填|
 
 - 响应：
 
@@ -2619,6 +2624,7 @@ method：POST
                   "debit_usd": "2.50",
                   "credit": "",
                   "credit_usd": "",
+				  "transaction_time": 1757570339000,
                   "fee": "0",
                   "end_bal": "end_bal", //如果是0，代表没交易后余额
                   "origin_transaction_id": "",
@@ -2634,6 +2640,7 @@ method：POST
                   "debit_usd": "2.50",
                   "credit": "",
                   "credit_usd": "",
+				  "transaction_time": 1757570339000,
                   "fee": "0",
                   "end_bal": "end_bal", //如果是0，代表没交易后余额
                   "origin_transaction_id": "",
@@ -2657,6 +2664,7 @@ method：POST
 |   available_balance_usd   | String | 可用余额(USD)  |
 |   bank_tx_list[n]   | Object | 交易列表  |
 |   bank_tx_list[0].transaction_date   | String | 交易日期  |
+|   bank_tx_list[0].transaction_time | long | 交易日期的时间戳  |
 |   bank_tx_list[0].posting_date   | String | 交易提交日期  |
 |   bank_tx_list[0].tx_id   | String | 交易ID |
 |   bank_tx_list[0].description   | String | 描述  |
@@ -2671,6 +2679,7 @@ method：POST
 |   bank_tx_list[0].tx_amount   | String | 实际交易货币的交易金额  |
 |   bank_tx_list[0].end_bal   | String | 交易后余额。如果是0，代表没交易后余额  |
 |   bank_tx_list[0].origin_transaction_id | String | 原消费交易id，退款交易才可能有值  |
+
 
 ### 查询卡敏感信息
 
@@ -3268,7 +3277,7 @@ events 数组元素从 string 转成 json:
 | --- | --- |--- |
 | action|String  | card-status |
 | events[n].params.card_no |String | 卡ID |
-| events[n].params.status |int | 卡激活状态, 0.冻结, 1.卡激活成功, 4.卡激活审核失败 |
+| events[n].params.status |int | 卡激活状态,1.卡激活成功 |
 
 示例：
 ```
