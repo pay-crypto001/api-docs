@@ -106,7 +106,7 @@ For illustrative sample code, please refer to [https://github.com/paycrypto-com/
 ### asset code list
 
 ```text
-url：/api/v1/mm/customer/asset
+url：/api/v1/mm/customer/asset/list
 method：GET
 ```
 
