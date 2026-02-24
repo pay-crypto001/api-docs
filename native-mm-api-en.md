@@ -293,7 +293,7 @@ method：POST
 | :---------: | :---: | :--------------: | :-------------------------------------------------------- |
 |  from_uni_asset_code  |  String  |    Required     |  USDT_ERC20     |
 |  to_uni_asset_code  |  String  |    Required     |  USD     |
-|  amount  |  String  |    Required     |  10000    |
+|  crypto_amount  |  String  |    Required     |  10000    |
 
 - Response:
 
