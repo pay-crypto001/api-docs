@@ -16,9 +16,9 @@
 	 * [2.2 Submitting user KYC attachment (optional)](#Submitting-user-KYC-attachment-optional)
      * [2.3 Query all KYC records](#Query-all-KYC-records)
      * [2.4 Query a specific user KYC records](#Query-a-specific-user-KYC-records)
-     * [2.5 更新用户 KYC_info 信息（可选）](#更新用户-KYC-信息)
-     * [2.6 更新用户账单地址信息](#更新用户地址信息)
-     * [2.7 查询指定用户 KYC 信息](#查询指定用户-KYC-信息)
+     * [2.5 Update user KYC_info information (optional)](#Update-user-KYC-info-optional)
+     * [2.6 Update user billing address information](#Update-user-billing-address-information)
+     * [2.7 Query specific user KYC information](#Query-specific-user-KYC-information)
 * [3.Cards](#cards)
      * [3.1 Apply a card](#Apply-a-card)
      * [3.2 Submit active card attachment](#submit-active-card-attachment)
@@ -28,8 +28,8 @@
      * [3.6 Request Lock, Unlock, Lost, Renew PIN, Replacement card](#Request-Lock-Unlock-Lost-Renew-PIN-Replacement-card)
      * [3.7 Query Lock, Unlock, Lost, Renew PIN, Replacement card Status](#Query-Lock-Unlock-Lost-Renew-PIN-Replacement-card-Status)
      * [3.8 Query tracking number](#Query-tracking-number)
-     * [3.9 升级双币种卡](#升级双币种卡)
-     * [3.10 再次发送包含PIN码的邮件](#再次发送包含PIN码的邮件)
+     * [3.9 Upgrade dual-currency card](#Upgrade-dual-currency-card)
+     * [3.10 Resend email containing PIN code](#Resend-email-containing-PIN-code)
      * [3.11 Upgrade KYC](#Upgrade-KYC)
 * [4.Top-up](#Top-up)
      * [4.1 User deposit with stablecoin](#User-deposit-with-stablecoin)
@@ -38,22 +38,22 @@
      * [4.4 Query a deposit transaction status](#Query-a-deposit-transaction-status)
      * [4.5 Query all the deposit records](#Query-all-the-deposit-records)
      * [4.6 Query a particular user deposit records](#Query-a-particular-user-deposit-records)
-     * [4.7 兑换USDT](#兑换USDT)  
-     * [4.8 查用户兑换记录](#查用户兑换记录)
+     * [4.7 Exchange USDT](#Exchange-USDT)  
+     * [4.8 Query user exchange records](#Query-user-exchange-records)
 * [5.Bank](#bank)
      * [5.1 Query card status](#Query-card-status)
      * [5.2 Query account balance](#Query-account-balance)
      * [5.3 Query transaction records](#Query-transaction-records)
      * [5.4 Query card information](#Query-card-information)
      * [5.5 User triggers a card withdrawal password reset Email (Currently not supported)](#User-triggers-a-card-withdrawal-password-reset-Email-(Currently-not-supported))
-     * [5.6 查询卡已授权交易](#查询卡已授权交易)
-     * [5.7 信用卡月限额修改](#信用卡月限额修改)
-     * [5.8 查询信用卡月限额](#查询信用卡月限额)
+     * [5.6 Query authorized card transactions](#Query-authorized-card-transactions)
+     * [5.7 Modify credit card monthly limit](#Modify-credit-card-monthly-limit)
+     * [5.8 Query credit card monthly limit](#Query-credit-card-monthly-limit)
      * [5.9 Freeze](#Freeze)
      * [5.10 Unfreeze](#Unfreeze)
-     * [5.11 实体卡初始化密码](#实体卡初始化密码)
-     * [5.12 实体卡更新密码](#实体卡更新密码)
-     * [5.13 实体卡重置密码](#实体卡重置密码)
+     * [5.11 Initialize physical card password](#Initialize-physical-card-password)
+     * [5.12 Update physical card password](#Update-physical-card-password)
+     * [5.13 Reset physical card password](#Reset-physical-card-password)
 * [6.Verification Code API](#Verification-Code-API)
      * [6.1 Sending Email verification code](#Sending-Email-verification-code)
      * [6.2 Email verification code validation](#Email-verification-code-validation)
@@ -652,11 +652,11 @@ method：GET
 |  Parameter  |  Type  | Whether Required | Description                                                |
 | :---------: | :----: | :------------:  | :--------------------------------------------------------- |
 |   acct_no   | String | Required | User's unique institutional ID
-|  page_num   | int  |    选填|页数     |
-|  page_size  | int  |  选填|页的大小   |                             |
+|  page_num   | int  |    Optional | Page number     |
+|  page_size  | int  |  Optional | Page size   |                             |
 | former_time |  long  | Optional | Time period upper limit, `UNIX` timestamp, Unit: `seconds` |
 | latter_time |  long  | Optional | Time period lower limit, `UNIX` timestamp, Unit: `seconds` |
-| time_sort | String | 选填|时间排序, asc为升序，desc为降序   |
+| time_sort | String | Optional | Time sorting, asc for ascending, desc for descending   |
 
 - Response:
 
@@ -690,21 +690,21 @@ method：GET
 
 > KYC failure reason please see "KYC Failure Error Codes"
 
-### 更新用户 KYC_info 信息（可选）
+### Update user KYC_info information (optional)
 
 ```text
 url：/api/v1/customers/accounts
 method：PUT
 ```
 
-- 请求：
+- Request:
 
 | Parameter  | Type |Requirement  | Description |
 | :------------: | :----: | :----------: |:---------- |
-|    acct_no     | String | 必填|机构用户的唯一id号 |
-|  kyc_info   | String  |    必填|kyc_info     |
+|    acct_no     | String | Required | Unique ID of the institution user |
+|  kyc_info   | String  |    Required | KYC information     |
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -715,27 +715,27 @@ method：PUT
 ```
 
 
-### 更新用户账单地址信息
+### Update user billing address information
 
 ```text
 url：/api/v1/customers/accounts/address
 method：PUT
 ```
 
-- 请求：
+- Request:
 
 | Parameter  | Type |Requirement  | Description |
 | :------------: | :----: | :----------: |:---------- |
-|    acct_no     | String | 必填|机构用户的唯一id号 |
-|   mobile | String |必填 |手机号，字符长度最大32|
-| country_code|	String|	必填|	手机国际区号，如“+86”。字符长度最大5|
-|   country | String |必填 |用户所在国家两位国家码，字符长度最大50|
-|   state | String |必填 |省份，如果是美国填两位州码，字符长度最大100|
-|   city | String |必填 |城市，字符长度最大100|
-|   address | String |必填 |通讯地址，银行卡会寄到该地址。字符长度最大256|
-|   zipcode | String |必填 |邮编，字符长度最大20|
+|    acct_no     | String | Required | Unique ID of the institution user |
+|   mobile | String | Required | Mobile number, maximum length 32 characters |
+| country_code|	String|	Required | International country code, e.g., "+86". Maximum length 5 characters |
+|   country | String | Required | Two-digit country code of the user's country, maximum length 50 characters |
+|   state | String | Required | Province/State, use two-letter state code for USA, maximum length 100 characters |
+|   city | String | Required | City, maximum length 100 characters |
+|   address | String | Required | Mailing address, where the bank card will be sent. Maximum length 256 characters |
+|   zipcode | String | Required | Zip code, maximum length 20 characters |
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -745,20 +745,20 @@ method：PUT
 }
 ```
 
-### 查询指定用户 KYC 信息
+### Query specific user KYC information
 
 ```text
 url：/api/v1/customers/accounts/kyc
 method：GET
 ```
 
-- 请求：
+- Request:
 
 | Parameter  | Type |Requirement  | Description |
 | :------------: | :----: | :----------: |:---------- |
-|    acct_no     | String | 必填|机构用户的唯一id号 |
+|    acct_no     | String | Required | Unique ID of the institution user |
 
-- 响应：
+- Response:
 
 ```
 {
@@ -778,28 +778,28 @@ method：GET
 
 | Parameter |  Type    |Description   |
 | :------------: | :----:  |:---------- |
-|   acct_no | String | 机构端用户编号(机构端唯一)，字符长度最大64位|
-|   acct_name | String  |机构端用户名，字符长度最大64位|
-|   first_name | String  |真实用户名，字符长度最大50位|
-|   last_name | String  |真实用户姓，字符长度最大50位|
-|   gender | String  |male:男，female:女，unknown:其他，字符长度最大6位|
-|   birthday | String  |生日（生日格式为"1990-01-01"）|
-|   city | String  |城市，字符长度最大100位|
-|   state | String  |省份，字符长度最大100位|
-|   country | String  |用户所在国家，字符长度最大50位|
-|   nationality | String  |国籍，字符长度最大255位|
-| doc_no | String  |证件号码，字符长度最大128位|
-| doc_type | String  |证件类型(目前只支持passport): passport: 护照，idcard：身份证，字符长度最大8位|
-|   country_code | String |手机国际区号，如“+86”。字符长度最大5位|
-|   mobile | String  |手机号，字符长度最大32位|
-|  mail | String  |邮箱，不支持163.com的邮箱。字符长度最大64位|
-|   address | String  |通讯地址，银行卡会寄到该地址。字符长度最大256位|
-|   zipcode | String  |邮编，字符长度最大20位|
-|   maiden_name | String  |妈妈的名字，字符长度最大255位|
-| card_type_id |String  |银行卡种类对应的id,比如 10010001|
-|   kyc_info | text  |KYC 其他信息|
-| cust_tx_id | String | KYC流水号|
-|   status    |  int   | 状态码: 0 已提交， 1 认证通过(开卡成功)， 2 认证未通过， 3 认证中， 4 提交信息处理中 6 已退款|
+|   acct_no | String | Institution user number (unique within the institution), maximum length 64 characters |
+|   acct_name | String  | Institution username, maximum length 64 characters |
+|   first_name | String  | Legal first name, maximum length 50 characters |
+|   last_name | String  | Legal last name, maximum length 50 characters |
+|   gender | String  | male: Male, female: Female, unknown: Other, maximum length 6 characters |
+|   birthday | String  | Birthday (Format: "YYYY-MM-DD") |
+|   city | String  | City, maximum length 100 characters |
+|   state | String  | State/Province, maximum length 100 characters |
+|   country | String  | Country of residence, maximum length 50 characters |
+|   nationality | String  | Nationality, maximum length 255 characters |
+| doc_no | String  | Document number, maximum length 128 characters |
+| doc_type | String  | Document type (currently only supports passport): passport: Passport, idcard: National ID card, maximum length 8 characters |
+|   country_code | String | International country code, e.g., "+86". Maximum length 5 characters |
+|   mobile | String  | Mobile number, maximum length 32 characters |
+|  mail | String  | Email address, 163.com not supported. Maximum length 64 characters |
+|   address | String  | Mailing address, where the bank card will be sent. Maximum length 256 characters |
+|   zipcode | String  | Zip code, maximum length 20 characters |
+|   maiden_name | String  | Mother's maiden name, maximum length 255 characters |
+| card_type_id |String  | Bank card type ID, e.g., 10010001 |
+|   kyc_info | text  | Other KYC information |
+| cust_tx_id | String | KYC transaction serial number |
+|   status    |  int   | Status code: 0 - Submitted, 1 - Verified (Card issued), 2 - Verification failed, 3 - Verifying, 4 - Processing submission, 6 - Refunded |
 
 
 ## Cards
@@ -1173,23 +1173,23 @@ method：POST
 }
 ```
 
-### 升级双币种卡
+### Upgrade dual-currency card
 
 ```text
 url：/api/v1/debit-cards/upgrade
 method：POST
 ```
 
-- 请求
+- Request:
 
 | Parameter |  Type  |   Requirement  |     Description         |
 | :------------: | :----: | :----------: |:---------- |
-|    card_no     | String |      必填    |银行卡ID          |
-| acct_no | String | 必填    |机构端用户编号(机构端唯一) |
+|    card_no     | String |      Required | Bank card ID |
+| acct_no | String | Required | Institution user number (unique within the institution) |
 
 
 
-- 响应：
+- Response：
 
 ```json
 {
@@ -1199,23 +1199,23 @@ method：POST
 }
 ```
 
-### 再次发送包含PIN码的邮件
+### Resend email containing PIN code
 
 ```text
 url：/api/v1/debit-cards/resendemail
 method：POST
 ```
 
-- 请求
+- Request:
 
 | Parameter |  Type  |   Requirement  |     Description         |
 | :------------: | :----: | :----------: |:---------- |
-|    card_no     | String |      必填    |银行卡ID          |
-| acct_no | String | 必填    |机构端用户编号(机构端唯一) |
+|    card_no     | String |      Required | Bank card ID |
+| acct_no | String | Required | Institution user number (unique within the institution) |
 
 
 
-- 响应：
+- Response：
 
 ```json
 {
@@ -1577,25 +1577,25 @@ method：GET
 |   coin_price      | String | coin_type/USD rate  |
 
 
-### 兑换USDT
+### Exchange USDT
 
 ```text
 url：/api/v1/exchange-transactions
 method：POST
 ```
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description                |
 | :------------: | :----: | :----------: |:---------- |
-|     card_no     | String | 必填|银行卡ID                   |
-|     acct_no     | String | 必填|机构端用户编号(机构端唯一) |
-|     currency_amount      | String | 必填|法币金额         |
-|   cust_tx_id    | String | 必填|机构的交易流水号           |
-|     remark     | String | 选填|交易备注                   |
-|   card_currency | String | 选填|卡币种，双币种卡才需要填写     |
+|     card_no     | String | Required | Bank card ID |
+|     acct_no     | String | Required | Institution user number (unique within the institution) |
+|     currency_amount      | String | Required | Fiat currency amount |
+|   cust_tx_id    | String | Required | Institution transaction serial number |
+|     remark     | String | Optional | Transaction remarks |
+|   card_currency | String | Optional | Card currency, only required for dual-currency cards |
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -1620,43 +1620,43 @@ method：POST
 
 | Parameter |  Type    | Description |
 | :------------: | :----------: |:---------- |
-|  cust_tx_id   | String |         机构流水号         |
-|    acct_no    | String | 机构端用户编号(机构端唯一) |
-|    card_no    |  String   |          银行卡ID         |
-|  cust_tx_time  |  long  |          创建时间          |
-|  tx_id   | String |        交易id         |
-|    coin_type    |  int   |          购买币种          |
-|   coin_amount   | String |          收到的金额          |
-|  exchange_fee   | String |     充值币种兑换成USDT的费用，单位是 ```coin_type```    |
-|     currency_type      | String | 法币类型  |
-|     currency_amount      | String | 法币金额  |
-| exchange_rate | String |            USDT/USD汇率            |
-|  tx_status   | int |   交易状态。0:待处理中，1:兑换成功，2充值失败        |
-| reason | String |           原因         |
+|  cust_tx_id   | String | Institution transaction serial number |
+|    acct_no    | String | Institution user number (unique within the institution) |
+|    card_no    |  String   | Bank card ID |
+|  cust_tx_time  |  long  | Creation time |
+|  tx_id   | String | Transaction ID |
+|    coin_type    |  int   | Purchase currency |
+|   coin_amount   | String | Received amount |
+|  exchange_fee   | String | Fee for converting deposit currency to USDT, unit is ```coin_type``` |
+|     currency_type      | String | Fiat currency type |
+|     currency_amount      | String | Fiat currency amount |
+| exchange_rate | String | USDT/USD exchange rate |
+|  tx_status   | int | Transaction status. 0: Pending, 1: Exchange successful, 2: Deposit failed |
+| reason | String | Reason |
 
-### 查用户兑换记录
+### Query user exchange records
 
 ```text
 url：/api/v1/exchange-transactions?acct_no={acct_no}&card_no={card_no}
 method：GET
 ```
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
-|    acct_no     | String | 必填|机构用户的唯一id号 |
-|     card_no     | String | 必填|银行卡ID                   |
-|     tx_id      | String | 必填| 交易流水 tx_id 或 cust_tx_id  |
-|  page_num   | int  |    选填|页数     |
-|  page_size  | int  |  选填|页的大小   |
-| former_time | long |  选填|前置时间, UNIX 时间戳，`秒为单位`   |
-| latter_time | long |  选填|后置时间, UNIX 时间戳，`秒为单位`   |
-| time_sort | String | 选填|时间排序, asc为正序，desc为反序   |
+|    acct_no     | String | Required | Unique ID of the institution user |
+|     card_no     | String | Required | Bank card ID |
+|     tx_id      | String | Required | Transaction ID (tx_id) or Customer Transaction ID (cust_tx_id) |
+|  page_num   | int  | Optional | Page number |
+|  page_size  | int  | Optional | Page size |
+| former_time | long | Optional | Start time, UNIX timestamp in seconds |
+| latter_time | long | Optional | End time, UNIX timestamp in seconds |
+| time_sort | String | Optional | Time sorting, asc for ascending, desc for descending |
 
 
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -1687,19 +1687,19 @@ method：GET
 
 |  Parameter   |  Type  |        Description         |
 | :--------: | :----: | :------------------------------ |
-|  cust_tx_id   | String |         机构流水号         |
-|    acct_no    | String | 机构端用户编号(机构端唯一) |
-|    card_no    |  String   |          银行卡ID         |
-|  cust_tx_time  |  long  |          创建时间          |
-|  tx_id   | String |        交易id         |
-|    coin_type    |  int   |          购买币种          |
-|   coin_amount   | String |          兑换到的金额          |
-|  exchange_fee   | String |     充值币种兑换成USDT的费用，单位是 ```coin_type```    |
-|     currency_type      | String | 法币类型  |
-|     currency_amount      | String | 法币数量  |
-| exchange_rate | String |            USDT/USD汇率            |
-|  tx_status   | int |   交易状态。0:待处理中，1:兑换成功，2充值失败        |
-| reason | String |           原因         |
+|  cust_tx_id   | String | Institution transaction serial number |
+|    acct_no    | String | Institution user number (unique within the institution) |
+|    card_no    |  String   | Bank card ID |
+|  cust_tx_time  |  long  | Creation time |
+|  tx_id   | String | Transaction ID |
+|    coin_type    |  int   | Purchase currency |
+|   coin_amount   | String | Exchanged amount |
+|  exchange_fee   | String | Fee for converting deposit currency to USDT, unit is ```coin_type``` |
+|     currency_type      | String | Fiat currency type |
+|     currency_amount      | String | Fiat currency amount |
+| exchange_rate | String | USDT/USD exchange rate |
+|  tx_status   | int | Transaction status. 0: Pending, 1: Exchange successful, 2: Deposit failed |
+| reason | String | Reason |
 
 
 ## Bank
@@ -1782,10 +1782,10 @@ method：POST
 |     Parameter     |  Type  | Whether Required | Description                                 |
 | :---------------: | :----: | :--------------: | :------------------------------------------ |
 |      card_no      | String |     Required     | Card ID                                 |
-|   card_currency | String | 选填|卡币种，双币种卡才需要填写     |
+|   card_currency | String | Optional | Card currency, only required for dual-currency cards |
 | former_month_year | String |     Required     | Period upper limit month (Format: `012020`) |
 | latter_month_year | String |     Required     | Period lower limit month (Format: `012020`) |
-|   tx_id | String | 选填|tx_id，交易ID     |
+|   tx_id | String | Optional | tx_id, transaction ID |
 
 - Response:
 
@@ -1864,7 +1864,7 @@ method：POST
 |      bank_tx_list[0].credit_usd      | String | Credit amount(USD)                                                      |
 |   bank_tx_list[0].fee   | String | fee  |
 |       bank_tx_list[0].type       |  int   | Transaction type, 1. Debit, 2. Deposit, 3. Withdrawal, 4. Transfer in, 5. Transfer out, 6. other  7. Settlement Adjustment  8. refund 9.transaction fail 10.verification transaction 11.void |
-|   bank_tx_list[0].reason   | String | 交易失败原因  |
+|   bank_tx_list[0].reason   | String | Reason for transaction failure |
 |   bank_tx_list[0].tx_currency   | String | Actual transaction currency  |
 |   bank_tx_list[0].tx_amount   | String | Transaction amount of actual transaction currency  |
 |   bank_tx_list[0].end_bal   | String |   |
@@ -1953,23 +1953,23 @@ method：POST
 ```
 
 
-### 查询卡已授权交易
+### Query authorized card transactions
 
 ```text
 url：/api/v1/bank/authorizedtransaction
 method：GET
 ```
 
-注意只有部分卡，PT和PH卡能查到已预授权的交易
+Note: Only some cards (PT and PH) can query pre-authorized transactions.
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
-|     card_no     | String | 必填|银行卡ID |
+|     card_no     | String | Required | Bank card ID |
 
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -2004,37 +2004,37 @@ method：GET
 
 | Parameter |  Type  |          Description          |
 | :--------: | :----: | :------------------------------ |
-|   transaction_date   | String | 交易日期  |
-|   posting_date   | String | 交易提交日期  |
-|   tx_id   | String | 交易ID |
-|   description   | String | 描述  |
-|   debit   | String | 消费金额(卡支持的货币)  |
-|   debit_usd   | String | 消费金额(USD)  |
-|   credit   | String | 存入金额(卡支持的货币)   |
-|   credit_usd   | String | 存入金额(USD)  |
-|   fee   | String | 手续费，只有部分卡有值。  |
-|   tx_currency   | String | 实际交易货币  |
-|   tx_amount   | String | 实际交易货币的交易金额  |
+|   transaction_date   | String | Transaction date |
+|   posting_date   | String | Posting date |
+|   tx_id   | String | Transaction ID |
+|   description   | String | Description |
+|   debit   | String | Debit amount (Card currency) |
+|   debit_usd   | String | Debit amount (USD) |
+|   credit   | String | Credit amount (Card currency) |
+|   credit_usd   | String | Credit amount (USD) |
+|   fee   | String | Fee (only available for some cards) |
+|   tx_currency   | String | Actual transaction currency |
+|   tx_amount   | String | Transaction amount in actual transaction currency |
 
 
 
-### 信用卡月限额修改
+### Modify credit card monthly limit
 
 ```text
 url：/api/v1/bank/cardlimit
 method：POST
 ```
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
-|     card_no     | String |必填| 银行卡ID |
-|   max_amount_single   | String | 必填|     当笔限额          |
-|   max_amount_daily   | String | 必填|     日限额           |
-|   max_amount_monthly   | String |  必填| 月限额           |
+|     card_no     | String | Required | Bank card ID |
+|   max_amount_single   | String | Required | Per-transaction limit |
+|   max_amount_daily   | String | Required | Daily limit |
+|   max_amount_monthly   | String | Required | Monthly limit |
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -2053,27 +2053,27 @@ method：POST
 
 | Parameter |  Type  |          Description          |
 | :--------: | :----: | :------------------------------ |
-|   card_no   | String |         银行卡ID           |
-|   card_type   | String |         银行卡类型           |
-|   max_amount_single   | String |      当笔限额          |
-|   max_amount_daily   | String |      日限额           |
-|   max_amount_monthly   | String |   月限额           |
-|   available_balance   | String |   可用余额           |
+|   card_no   | String | Bank card ID |
+|   card_type   | String | Bank card type |
+|   max_amount_single   | String | Per-transaction limit |
+|   max_amount_daily   | String | Daily limit |
+|   max_amount_monthly   | String | Monthly limit |
+|   available_balance   | String | Available balance |
 
-### 查询信用卡月限额
+### Query credit card monthly limit
 
 ```text
 url：/api/v1/bank/cardlimit
 method：GET
 ```
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
-|     card_no     | String |必填| 银行卡ID |
+|     card_no     | String | Required | Bank card ID |
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -2092,12 +2092,12 @@ method：GET
 
 | Parameter |  Type  |          Description          |
 | :--------: | :----: | :------------------------------ |
-|   card_no   | String |         银行卡ID           |
-|   card_type   | String |         银行卡类型           |
-|   max_amount_single   | String |      当笔限额          |
-|   max_amount_daily   | String |      日限额           |
-|   max_amount_monthly   | String |   月限额           |
-|   available_balance   | String |   可用余额           |
+|   card_no   | String | Bank card ID |
+|   card_type   | String | Bank card type |
+|   max_amount_single   | String | Per-transaction limit |
+|   max_amount_daily   | String | Daily limit |
+|   max_amount_monthly   | String | Monthly limit |
+|   available_balance   | String | Available balance |
 
 
 ### freeze
@@ -2107,13 +2107,13 @@ url：/api/v1/bank/freeze
 method：POST
 ```
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
 |     card_no     | String |Required|  |
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -2131,13 +2131,13 @@ url：/api/v1/bank/unfreeze
 method：POST
 ```
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
 |     card_no     | String |Required|  |
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -2148,22 +2148,22 @@ method：POST
 ```
 
 
-### 实体卡初始化密码
+### Initialize physical card password
 
 ```text
 url：/api/v1/bank/initpassword
 method：POST
 ```
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
-|     card_no     | String |必填| 银行卡ID |
-|     pin     | String |必填|  |
-|     confirm_pin     | String |必填|  |
+|     card_no     | String | Required | Bank card ID |
+|     pin     | String |Required|  |
+|     confirm_pin     | String |Required|  |
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -2173,23 +2173,23 @@ method：POST
 }
 ```
 
-### 实体卡更新密码
+### Update physical card password
 
 ```text
 url：/api/v1/bank/updatepassword
 method：POST
 ```
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
-|     card_no     | String |必填| 银行卡ID |
-|     new_pin     | String |必填|  ｜
-|     old_pin     | String |必填|  ｜
+|     card_no     | String | Required | Bank card ID |
+|     new_pin     | String |Required|  ｜
+|     old_pin     | String |Required|  ｜
 
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -2199,22 +2199,22 @@ method：POST
 }
 ```
 
-### 实体卡重置密码
+### Reset physical card password
 
 ```text
 url：/api/v1/bank/resetpassword
 method：POST
 ```
 
-- 请求：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
-|     card_no     | String |必填| 银行卡ID |
-|     pin     | String |必填|  |
-|     confirm_pin     | String |必填|  |
+|     card_no     | String | Required | Bank card ID |
+|     pin     | String |Required|  |
+|     confirm_pin     | String |Required|  |
 
-- 响应：
+- Response:
 
 ```json
 {
@@ -2511,13 +2511,13 @@ events[n] element convert string to json:
 
 ### credit card balance updated
 
-| 名称| 类型|描述 |
-| --- | --- |--- |
-| action |String |  creditcard-balance-updated |
-| events[n].params.tx_id |String |  card transaction ID |
-| events[n].params.card_no |String | card ID |
+| Name | Type | Description |
+| --- | --- | --- |
+| action | String | creditcard-balance-updated |
+| events[n].params.tx_id | String | card transaction ID |
+| events[n].params.card_no | String | card ID |
 
-示例：
+Example:
 ```
 {
     "action": "creditcard-balance-updated",
@@ -2539,13 +2539,13 @@ events element convert string to json:
 
 ### deposit card balance updated
 
-| 名称| 类型|描述 |
-| --- | --- |--- |
-| action |String |  depositcard-balance-updated |
-| events[n].params.tx_id |String | card transaction ID |
-| events[n].params.card_no |String |  |
+| Name | Type | Description |
+| --- | --- | --- |
+| action | String | depositcard-balance-updated |
+| events[n].params.tx_id | String | card transaction ID |
+| events[n].params.card_no | String |  |
 
-示例：
+Example:
 ```
 {
     "action": "depositcard-balance-updated",
@@ -2570,16 +2570,16 @@ events element convert string to json:
 
 One time password
 
-| 名称| 类型|描述 |
-| --- | --- |--- |
-| action |String |  card-3ds-otp |
-| events[n].params.otp |String | otp |
-| events[n].params.card_no |String | card id |
-| events[n].params.transaction_currency |String | transaction currency |
-| events[n].params.transaction_amount |String | transaction amount |
-| events[n].params.merchant_name |String | merchant name |
+| Name | Type | Description |
+| --- | --- | --- |
+| action | String | card-3ds-otp |
+| events[n].params.otp | String | otp |
+| events[n].params.card_no | String | card id |
+| events[n].params.transaction_currency | String | transaction currency |
+| events[n].params.transaction_amount | String | transaction amount |
+| events[n].params.merchant_name | String | merchant name |
 
-示例：
+Example:
 ```
 {
     "action": "card-3ds-otp",
@@ -2622,7 +2622,7 @@ method：POST
 | action |String |  deposit-status|
 | events[n].params |Object | event parameters |
 
-Example：
+Example:
 ```
 {
     "action": "test",
@@ -2649,7 +2649,7 @@ url：/api/v1/events
 method：GET
 ```
 
-- Request：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
@@ -2658,7 +2658,7 @@ method：GET
 |  page_size  | int  |  Optional|Page size   |
 
 
-- Response：
+- Response:
 ```
 {
   "code": 0,
@@ -2690,7 +2690,7 @@ url：/api/v1/events
 method：PUT
 ```
 
-- Request：
+- Request:
 
 | Parameter |  Type  | Requirement  |Description |
 | :------------: | :----: | :----------: |:---------- |
@@ -2708,7 +2708,7 @@ method：PUT
 
 
 
-- Response：
+- Response:
 
 ```json
 {
@@ -2729,7 +2729,7 @@ method：PUT
 | events[n].params.status |int | 0.Pending 1.Successful 2.Failure |
 | events[n].request_type | int |  1.Lock 2.Unlock 3.Lost 4.Renew PIN 5.Replacement |
 
-Example：
+Example:
 ```
 {
     "action": "card-lock-status",
