@@ -115,12 +115,13 @@
 
 API 使用步骤：
 
-1. 请在 [https://customer.paycrypto.com/](https://customer.paycrypto.com/) 注册机构账户，如果访问不了请提供你的IP地址。
+1. 请在 [https://caas.native.financial/](https://caas.native.financial/) 注册机构账户，如果访问不了请提供你的IP地址。
 2. 我们审核通过后，机构才可以登录成功。
 3. 机构登录，查看钱包地址，给钱包充值，支持 USDT、BTC、ETH 等。
 4. 机构登录，创建 Appkey 和 secret，可选择配置 webhook 回调地址。
 5. 调用 API 进行 KYC、开卡、激活卡、充值等操作，状态变更 Paycrypto 会通过回调地址通知机构服务器。
 
+![](./imgs/caas/workflow1.jpg)
 ![](./imgs/caas/workflow0.jpeg)
 ![](./imgs/caas/workflow-cn.png)
 
@@ -128,13 +129,13 @@ API 使用步骤：
 
 机构 Dashboard :
 
-* 测试环境（有IP白名单限制）: https://customer-sandbox.paycrypto.com/
-* 生产环境（有IP白名单限制）: https://customer.paycrypto.com/
+* 测试环境（有IP白名单限制）: https://caas-sandbox.native.financial/
+* 生产环境（有IP白名单限制）: https://caas.native.financial/
 
 API 域名：
 
-* 测试环境: https://api-sandbox.paycrypto.com/
-* 生产环境: https://api.paycrypto.com/
+* 测试环境: https://api-sandbox.paycrypto.com/ , https://api-sandbox.native.financial/
+* 生产环境: https://api.paycrypto.com/ , https://api.native.financial/
 
 ## 接口规范
 

@@ -1,6 +1,6 @@
-# Paycrypto API Documentation
+# Card issuing API Documentation
 
-* [Paycrypto API](#Paycrypto-API)
+* [Card issuing API](#Card issuing-API)
 * [API Specifications](#API-Specifications)
 * [FAQ (Frequently Asked Questions)](./paycrypto-api-FAQ.md)
 * [1.Institution](#Institution)
@@ -75,33 +75,28 @@
      * [8.4 KYC Failure Error Codes](#KYC-Failure-Error-Codes)
 
 
-## Paycrypto API
+## Card issuing API
 
 
-Welcome to the Paycrypto API documentation. This document is aimed at Paycrypto ToB's card business. Currently, it supports three card types, namely F card, J card and P card. The corresponding metal cards are F-M card, J-M card and P-M card. The corresponding virtual cards are F-V card, J-V card and P-V card. The fees and the parameters are slightly different for cards.
+Welcome to the Card Issuing API Documentation.This document is intended for ToB card business services. Currently, it supports physical cards, virtual cards, and shared cards, covering dozens of card types with different card BINs.Supported fiat currencies and fees vary by card type, and the API request parameters also differ slightly. 
 
   | Card name |  Currency  |           distinguish            |
   | :--------: | :----: | :------------------------------ |
   |    J,J-M*,J-V card(ID: 30000001 - 30000009)     | USD | Within 48h after KYC audit, KYC fill only supports English, `mobile` format such as +8615821702552. The name of the user will be printed on the card, and the card making time need 1-2 weeks. User must submit hold a card and passport photo when activation card. Recharge arrival time is within 4h |
   |   P,P-M*,P-V card(ID: 40000001 - 40000009)   | EUR       |         Within 48h after KYC audit, KYC fill only supports English, `mobile` format such as +8615821702552, `country` and `nationality` fill in the two-digit country code。Recharge arrival time is within 4h |
 
-  |  Card name |  Card type  |           distinguish            |
-  | :--------: | :----: | :------------------------------ |
-  |    J,P card    |  Plastic card  |  Plastic material, The card will be mailed to the user  |
-  |    J-MB,P-MB card    |  Metal Black card  |  Metal material, Black color, The card will be mailed to the user   |
-  |    J-MS,P-MS card    |  Metal Silver card  |  Metal material, Silver color, The card will be mailed to the user   |
-  |    J-MG,P-MG card    |  Metal Golden card  |  Metal material, Golden color, The card will be mailed to the user   |
-  |    J-V,P-V card    |  Virtual card  |  Just get the card information through the API, user can consume online   |
+  
 
   
 API usage steps are as follows:
 
-1. Please register an institution account at [https://customer.paycrypto.com/](https://customer.paycrypto.com/), and if you are unable to access, please provide your IP address.
+1. Please register an institution account at [https://caas.native.financial/](https://caas.native.financial/), and if you are unable to access, please provide your IP address.
 2. After the Paycrypto audit is passed, the institution can login successfully.
 3. Checks the wallet address and deposit, support USDT, BTC, ETH, etc..
 4. Create Appkey and secret, and optionally configure webhook callback address.
 5. Call the API for KYC, card opening, card activation, deposit and other operations. Paycrypto will notify through the callback address when the status changes.
 
+![](./imgs/caas/workflow1.jpg)
 ![](./imgs/caas/workflow0.jpeg)
 ![](./imgs/caas/workflow.png)
 
@@ -110,13 +105,13 @@ API usage steps are as follows:
 
 Dashboard :
 
-* Test environment dashboard (restricted by IP whitelist): https://customer-sandbox.paycrypto.com/
-* Production environment dashboard (restricted by IP whitelist): https://customer.paycrypto.com/
+* Test environment dashboard (restricted by IP whitelist): https://caas-sandbox.native.financial/
+* Production environment dashboard (restricted by IP whitelist): https://caas.native.financial/
 
 API :
 
-* Test environment: https://api-sandbox.paycrypto.com/
-* Production environment: https://api.paycrypto.com/
+* Test environment: https://api-sandbox.paycrypto.com/ , https://api-sandbox.native.financial/
+* Production environment: https://api.paycrypto.com/ , https://api.native.financial/
 
 ## API Specifications
 
