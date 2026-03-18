@@ -1,6 +1,6 @@
-# Paycrypto API 文档
+# Card issuing API 文档
 
-- [Paycrypto API](#Paycrypto-API)
+- [Card issuing API](#Card-issuing-API)
 - [接口规范](#接口规范)
 * [FAQ (常见问题)](./paycrypto-api-FAQ.md)
 - [1.机构](#机构)
@@ -102,9 +102,9 @@
      - [11.3 异常错误码](#异常错误码)
      - [11.4 KYC失败错误码](#KYC失败错误码)
 
-## Paycrypto API
+## Card issuing API
 
-欢迎使用 Paycrypto API 文档。本文档是针对 Paycrypto ToB 的卡业务，目前支持实体卡、虚拟卡、共享卡，共几十个卡种类（不同卡BIN），不同卡种支持的法币和手续费不同，接口调用参数也略有差别。例如：
+欢迎使用 Card issuing API 文档。本文档是针对 ToB 的卡业务，目前支持实体卡、虚拟卡、共享卡，共几十个卡种类（不同卡BIN），不同卡种支持的法币和手续费不同，接口调用参数也略有差别。例如：
 
 
 | 卡名 |  法币  |           区别            |

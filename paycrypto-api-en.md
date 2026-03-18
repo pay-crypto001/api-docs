@@ -1,6 +1,6 @@
 # Card issuing API Documentation
 
-* [Card issuing API](#Card issuing-API)
+* [Card issuing API](#Card-issuing-API)
 * [API Specifications](#API-Specifications)
 * [FAQ (Frequently Asked Questions)](./paycrypto-api-FAQ.md)
 * [1.Institution](#Institution)
@@ -91,10 +91,10 @@ Welcome to the Card Issuing API Documentation.This document is intended for ToB 
 API usage steps are as follows:
 
 1. Please register an institution account at [https://caas.native.financial/](https://caas.native.financial/), and if you are unable to access, please provide your IP address.
-2. After the Paycrypto audit is passed, the institution can login successfully.
+2. After the audit is passed, the institution can login successfully.
 3. Checks the wallet address and deposit, support USDT, BTC, ETH, etc..
 4. Create Appkey and secret, and optionally configure webhook callback address.
-5. Call the API for KYC, card opening, card activation, deposit and other operations. Paycrypto will notify through the callback address when the status changes.
+5. Call the API for KYC, card opening, card activation, deposit and other operations. We will notify through the callback address when the status changes.
 
 ![](./imgs/caas/workflow1.jpg)
 ![](./imgs/caas/workflow0.jpeg)
@@ -1923,7 +1923,7 @@ virtualcard decrypt：
 
 ### User triggers a card withdrawal password reset Email (Currently not supported)
 
-An institution invokes the Paycrypto API triggering the action that sends the bank card withdrawal password reset Email to the user's account.
+An institution invokes the API triggering the action that sends the bank card withdrawal password reset Email to the user's account.
 
 - Request:
 
