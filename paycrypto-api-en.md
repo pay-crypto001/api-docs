@@ -97,6 +97,21 @@ API usage steps are as follows:
 5. Call the API for KYC, card opening, card activation, deposit and other operations. We will notify through the callback address when the status changes.
 
 ![](./imgs/caas/workflow1.jpg)
+
+Each institutional has a wallet funding account. When topping up the client’s card, the amount will be deducted from the balance of this funding account.
+
+The card application fee shall be deducted from the Card Application Fund, and the card top-up amount shall be deducted from the Card Top-up Fund. Currently, only we can perform the transfer between the two funds for you.
+
+
+Example Process Steps：
+
+1.When your user initiates a top-up, you will collect the funds from the user into your corporate wallet.
+
+2.You then call our API to perform the top-up, and at that moment your account balance must be sufficient.
+
+3.Pre-load some funds to your wallet account for use over the next few days.
+
+
 ![](./imgs/caas/workflow0.jpeg)
 ![](./imgs/caas/workflow.png)
 
@@ -803,7 +818,7 @@ This API contains methods related to
 
 ### Apply a card
 
-The card application result will be returned via the Card Apply Event Webhook.
+The card application result will be returned via the Card Apply Event Webhook. This endpoint requires a card number parameter for physical cards.
 
 - Request:
 
@@ -875,6 +890,9 @@ method：POST
 
 2. The card activation result will be returned via the **Card Activation Event Webhook.**
 
+
+The masked  card_no  (e.g., 1718298686074503****) means the card has not been activated yet. The full unmasked value (e.g., 17182986860745039429) indicates that the card has been successfully activated.
+Once activated successfully , the **** will be replaced with the last four digits of the card number.
 
 ```text
 url：/api/v1/debit-cards/status
@@ -1871,7 +1889,7 @@ method：POST
 
 ```text
 virtual card url：/api/v1/bank/virtualcard, physical card url: /api/v1/bank/card
-method：GET or POST
+method：POST
 ```
 
 |  Parameter  | Type  | Whether Required |                        Description                         |
@@ -1918,7 +1936,7 @@ virtualcard decrypt：
 |  encrypt_data    | String[]  |    encrypted data          |
 |  public_key  |  String    |  public key    |
 
-> encryt_data decrypt [RSA example](https://github.com/paycrypto-com/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/RSATest.java#L60) or [ECIES example](https://github.com/paycrypto-com/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/BankTest.java#L75)
+> encryt_data decrypt [RSA example](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/RSATest.java#L60) or [ECIES example](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/BankTest.java#L75)
 
 
 ### User triggers a card withdrawal password reset Email (Currently not supported)
@@ -2530,7 +2548,11 @@ events element convert string to json:
            "card_no": "78833000000198766"
        }
 }
+
+
 ```
+
+For the specific 'tx_id' transaction type, please refer to section **Query transaction records**.
 
 ### deposit card balance updated
 

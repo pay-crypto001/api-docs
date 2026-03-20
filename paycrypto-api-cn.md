@@ -42,7 +42,7 @@
      - [4.6 查询指定用户所有卡充值记录](#查询指定用户所有卡充值记录)
      - [4.7 兑换USDT](#兑换USDT)  
      - [4.8 查用户兑换记录](#查用户兑换记录)
-- [5.信用卡](#信用卡)
+- [5.信用卡](#信用卡-暂不支持)
      - [5.1 授信](#信用卡授信)
      - [5.2 查询授信记录](#查询授信记录)
      - [5.3 用户授信额度查询](#用户授信额度查询)
@@ -53,7 +53,7 @@
      - [5.8 解冻](#解冻)
      - [5.9 给卡种共享账户充值](#给卡种共享账户充值)
      - [5.10 查询卡种共享账户余额](#查询卡种共享账户余额)
-- [6.共享卡](#共享卡)
+- [6.共享卡](#共享卡-暂不支持)
      - [6.1 修改限额](#修改限额)
      - [6.2 查询当前限额](#查询当前限额)
      - [6.3 查询限额修改记录](#查询限额修改记录)
@@ -122,6 +122,17 @@ API 使用步骤：
 5. 调用 API 进行 KYC、开卡、激活卡、充值等操作，状态变更 Paycrypto 会通过回调地址通知机构服务器。
 
 ![](./imgs/caas/workflow1.jpg)
+
+每家机构均设有一个钱包资金账户。为客户卡片进行充值时，相应金额将从该资金账户余额中扣除。
+
+办卡手续费将从办卡资金池中扣除，卡片充值金额将从卡片充值资金池中扣除。目前仅我方可为您在两个资金池之间进行划转操作。
+
+流程示例：
+
+1. 当您的用户发起充值时，由您向用户收取资金并存入您的企业钱包。
+2. 随后您调用我方接口执行充值操作，此时您的账户余额必须充足。
+3. 请预先向您的钱包账户存入一定金额的资金，用于未来数日的业务使用。
+
 ![](./imgs/caas/workflow0.jpeg)
 ![](./imgs/caas/workflow-cn.png)
 
@@ -412,7 +423,7 @@ method：GET
 |   min_deposit   | String |           单笔最小充值金额（法币）           |
 |   max_deposit   | String |           单笔最大充值金额（法币）           |
 |   exchange_rate   | String |           USDT兑换相应法币的汇率           |
-|   loading_rate   | String |           给用户充值时付给 Paycrypto 的阶梯费率，大部分卡只有一阶费率           |
+|   loading_rate   | String |           给用户充值时 的阶梯费率，大部分卡只有一阶费率           |
 |   bank_transaction_rate   | String |          银行卡刷卡消费的手续费率           |
 |   bank_atm_rate   | String |          ATM取款时的手续费率           |
 |   bank_atm_fee   | String |          ATM取款时的固定手续费           |
@@ -907,6 +918,9 @@ method：POST
 ### 用户激活卡片
 
 虚拟卡激活成功后，通过银行接口查卡信息可以拿到真实卡号、cvv、过期时间。
+
+card_no 脱敏显示（例如：1718298686074503****）表示该卡片尚未激活。完整显示的（例如：17182986860745039429）表示卡片已成功激活。
+激活成功后，卡号末尾的 **** 会替换为卡号后四位数字。
 
 ```text
 url：/api/v1/debit-cards/status
@@ -2688,7 +2702,7 @@ method：POST
 
 ```text
 虚拟卡 url：/api/v1/bank/virtualcard， 实体卡和金属卡 url：/api/v1/bank/card
-method：GET 或 POST
+method：POST
 ```
 
 |  Parameter  | Type  | Whether Required |                        Description                         |
@@ -2739,11 +2753,11 @@ A卡虚拟卡解密：
 |  encrypt_data    | String[]  |    加密后的数据          |
 |  public_key  |  String    |  公钥    |
 
-> encryt_data解密请参考[RSA例子](https://github.com/paycrypto-com/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/RSATest.java#L60) 或 [ECIES例子](https://github.com/paycrypto-com/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/BankTest.java#L75)
+> encryt_data解密请参考[RSA例子](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/RSATest.java#L60) 或 [ECIES例子](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/BankTest.java#L75)
 
 ### 用户请求重置密码（暂不支持）
 
-机构调 Paycrypto 接口，Paycrypto 通知银行发送设置取款密码链接的邮件给用户。
+机构调 API 接口，我们通知银行发送设置取款密码链接的邮件给用户。
 
 ```text
 url：/api/v1/bank/reset-pwd
@@ -3185,7 +3199,7 @@ method：PUT
 
 ```
 
-如何验签请见：[Paycrypto 推送验签流程](https://github.com/paycrypto-com/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/NotificationTest.java)
+如何验签请见：[推送验签流程](https://github.com/paycrypto-com/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/NotificationTest.java)
 
 
 
