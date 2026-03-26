@@ -1929,7 +1929,7 @@ physical card decrypt：
 {"card_number":"123456789101212"}
 
 virtualcard decrypt：
-{"cvv":"123","card_number":"1001022400001101","expire":"022022"}
+{"cvv":"123","card_number":"1001022400001101","expire":"022022","iframe_url":"https://embedded-sandbox.tech.com/iframe/card?token=pan_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiZDU3ZjBlZDU"}
 ```
 |    Parameter    |  Type   |      Description                                                     |
 | :---------: | :----:   | :--------------------------- |
