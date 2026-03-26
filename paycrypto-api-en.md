@@ -1930,6 +1930,9 @@ physical card decrypt：
 
 virtualcard decrypt：
 {"cvv":"123","card_number":"1001022400001101","expire":"022022","iframe_url":"https://embedded-sandbox.tech.com/iframe/card?token=pan_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiZDU3ZjBlZDU"}
+
+If a value exists for iframe_url while the CVV is displayed as ***, this indicates the user can only view the CVV and expiration date by accessing the iframe_url.
+
 ```
 |    Parameter    |  Type   |      Description                                                     |
 | :---------: | :----:   | :--------------------------- |

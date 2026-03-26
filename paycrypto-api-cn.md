@@ -2743,6 +2743,7 @@ RSA：
 
 虚拟卡解密：
 {"cvv":"123","card_number":"1001022400001101","expire":"022022","iframe_url":"https://embedded-sandbox.tech.com/iframe/card?token=pan_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiZDU3ZjBlZDU"}
+如果iframe_url有值但cvv是***，说明用户只能打开iframe_url查看CVV和过期时间。
 
 A卡虚拟卡解密：
 {"cvv":"***","card_number":"****************","expire":"******"，"password":"343545"}
