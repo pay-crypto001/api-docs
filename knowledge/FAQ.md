@@ -4,7 +4,7 @@
 
 
 
-#### 对接流程？怎么使用 API?
+### 对接流程？怎么使用 API?
 
 API 使用步骤：
 
@@ -27,7 +27,7 @@ API 域名：
 代码请参考：[https://github.com/pay-crypto001/paycrypto-sdk-java](https://github.com/pay-crypto001/paycrypto-sdk-java)
 
 
-#### 如何给机构账户充值？资金流程？
+### 如何给机构账户充值？资金流程？
 
 机构 Dashboard :
 
@@ -53,13 +53,13 @@ API 域名：
 ![](./imgs/caas/workflow-cn.png)
 
 
-#### 发行卡片需要完成哪一级 KYC 认证？审核KYC时间多久？实体卡物流时间多久？
+### 发行卡片需要完成哪一级 KYC 认证？审核KYC时间多久？实体卡物流时间多久？
 
 无 KYC：仅核验用户基础信息（姓名、电子邮箱、手机号码、地址），审核宽松，最快 3 分钟内完成。
 标准 KYC：需提交基础信息及护照文件，审核时长不超过 3 分钟。
 加强 KYC：需完成基础信息、护照上传、活体认证等多重核验，审核周期为 8 至 48 小时。
 
-#### Native卡和UQ卡的限额？
+### Native卡和UQ卡的限额？
 
 
 
@@ -108,7 +108,7 @@ Need bypass if you want to make large transactions.
 
 Application fee : 103 usd. （Covers the first year's annual fee.）
 
-#### 有没有那种消费接受高的网站的名单？
+### 有没有那种消费接受高的网站的名单？
 
 These popular services are all supported.
 
@@ -136,7 +136,7 @@ GITHUB
 GRAB
 CURSOR
 
-#### 卡申请资金（Card Application Fund）与卡充值资金（Card Top Up Fund）账户有何区别？如何为申请卡资金账户充值？
+### 卡申请资金（Card Application Fund）与卡充值资金（Card Top Up Fund）账户有何区别？如何为申请卡资金账户充值？
 
 卡申请手续费将从卡申请资金账户中扣除，卡片充值金额将从卡充值资金账户中扣除。充值后资金会到卡充值资金账户，目前仅我方可为您办理两个资金账户之间的划转操作。
 
@@ -146,38 +146,38 @@ CURSOR
 The card application fee shall be deducted from the Card Application Fund, and the card top-up amount shall be deducted from the Card Top-up Fund.
 Currently, only we can perform the transfer between the two funds for you.
 
-#### 如果我们已经验证过用户的KYC，还需要再提交吗?
+### 如果我们已经验证过用户的KYC，还需要再提交吗?
 
 无 KYC、标准 KYC的卡只需要提交凭证给我们（用这个参数 “kyc_info”），加强 KYC 的卡必须重新提交。
 
-#### 参数 “acct_no” 是我们每个用户的唯一编号吗?   
+### 参数 “acct_no” 是我们每个用户的唯一编号吗?   
 
 是的
 
 
-#### 不同的卡，包括虚拟卡和实体卡，申请流程一样吗？
+### 不同的卡，包括虚拟卡和实体卡，申请流程一样吗？
 
 流程是一样的，有的卡会有细微差别。申请实体卡的时候需要带上卡号，虚拟卡不需要。
 
  Physical and virtual cards use the same activation API, but the card application endpoint requires a card number parameter for physical cards.
 
-#### 为什么Card_no 带星号？
+### 为什么Card_no 带星号？
 
 若返回完整明文卡号（例如：17182986860745039429），表示卡片已成功激活。若返回脱敏卡号（例如：1718298686074503****），表示卡片尚未激活。一旦激活成功，末尾的 **** 会替换为卡号最后四位数字。
 
-#### 怎么查卡敏感信息？
+### 怎么查卡敏感信息？
 
 https://github.com/pay-crypto001/paycrypto-sdk-java/blob/main/src/test/java/com/paycrypto/open/api/test/BankTest.java#L90
 
-#### 支持API冻结、解冻、注销卡吗？
+### 支持API冻结、解冻、注销卡吗？
 
 冻结解冻支持，注销必须人工处理。
 
-#### 还没有签合同，可以先注册Sandbox账户试用吗？
+### 还没有签合同，可以先注册Sandbox账户试用吗？
 
 不行，但我们可以截图给你看我们产品
 
-#### 美元卡和欧元卡的KYC参数区别?
+### 美元卡和欧元卡的KYC参数区别?
 
 EUR card "country,state,city,address" should fill europe country address.
 ```
