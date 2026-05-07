@@ -2,7 +2,6 @@
 
 - [Card issuing API](#Card-issuing-API)
 - [接口规范](#接口规范)
-* [FAQ (常见问题)](./paycrypto-api-FAQ.md)
 - [1.机构](#机构)
      - [1.1 支持的卡种类查询](#支持的卡种类查询)
      - [1.2 查询机构余额](#查询机构余额)
@@ -92,9 +91,9 @@ API 使用步骤：
 
 1. 请在 [https://caas.native.financial/](https://caas.native.financial/) 注册机构账户，如果访问不了请提供你的IP地址。
 2. 我们审核通过后，机构才可以登录成功。
-3. 机构登录，查看钱包地址，给钱包充值，支持 USDT、BTC、ETH 等。
+3. 机构登录，查看钱包地址，给钱包充值，支持 USDT、USDC等。
 4. 机构登录，创建 Appkey 和 secret，可选择配置 webhook 回调地址。
-5. 调用 API 进行 KYC、开卡、激活卡、充值等操作，状态变更 Paycrypto 会通过回调地址通知机构服务器。
+5. 调用 API 进行 KYC、开卡、激活卡、充值等操作，状态变更我们会通过回调地址通知机构服务器。
 
 ![](./imgs/caas/workflow1.jpg)
 
@@ -2006,32 +2005,7 @@ A卡虚拟卡解密：
 
 > encryt_data解密请参考[RSA例子](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/RSATest.java#L60) 或 [ECIES例子](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/BankTest.java#L75)
 
-### 用户请求重置密码（暂不支持）
 
-机构调 API 接口，我们通知银行发送设置取款密码链接的邮件给用户。
-
-```text
-url：/api/v1/bank/reset-pwd
-method：POST
-```
-
-- 请求
-
-| Parameter |  Type  |   Requirement  |     Description         |
-| :------------: | :----: | :----------: |:---------- |
-|    card_no     | String |      必填    |银行卡号          |
-| acct_no | String | 必填    |机构端用户编号(机构端唯一) |
-
-
-- 响应：
-
-```json
-{
-  "code": 0,
-  "msg": "string",
-  "result": true
-}
-```
 
 ### 查询卡已授权交易
 
@@ -2097,87 +2071,6 @@ method：GET
 |   tx_amount   | String | 实际交易货币的交易金额  |
 
 
-
-### 信用卡月限额修改
-
-```text
-url：/api/v1/bank/cardlimit
-method：POST
-```
-
-- 请求：
-
-| Parameter |  Type  | Requirement  |Description |
-| :------------: | :----: | :----------: |:---------- |
-|     card_no     | String |必填| 银行卡ID |
-|   max_amount_single   | String | 必填|     当笔限额          |
-|   max_amount_daily   | String | 必填|     日限额           |
-|   max_amount_monthly   | String |  必填| 月限额           |
-
-- 响应：
-
-```json
-{
-    "code": 0,
-    "msg": "SUCCESS",
-    "result": {
-        "card_no": "438521******2001",
-        "card_type": "60000001",
-        "max_amount_single": "1000",
-        "max_amount_daily": "2000",
-        "max_amount_monthly": "100000",
-        "available_balance": "100",
-    }
-}
-```
-
-| Parameter |  Type  |          Description          |
-| :--------: | :----: | :------------------------------ |
-|   card_no   | String |         银行卡ID           |
-|   card_type   | String |         银行卡类型           |
-|   max_amount_single   | String |      当笔限额          |
-|   max_amount_daily   | String |      日限额           |
-|   max_amount_monthly   | String |   月限额           |
-|   available_balance   | String |   可用余额           |
-
-### 查询信用卡月限额
-
-```text
-url：/api/v1/bank/cardlimit
-method：GET
-```
-
-- 请求：
-
-| Parameter |  Type  | Requirement  |Description |
-| :------------: | :----: | :----------: |:---------- |
-|     card_no     | String |必填| 银行卡ID |
-
-- 响应：
-
-```json
-{
-    "code": 0,
-    "msg": "SUCCESS",
-    "result": {
-        "card_no": "438521******2001",
-        "card_type": "60000001",
-        "max_amount_single": "1000",
-        "max_amount_daily": "2000",
-        "max_amount_monthly": "100000",
-        "available_balance": "100",
-    }
-}
-```
-
-| Parameter |  Type  |          Description          |
-| :--------: | :----: | :------------------------------ |
-|   card_no   | String |         银行卡ID           |
-|   card_type   | String |         银行卡类型           |
-|   max_amount_single   | String |      当笔限额          |
-|   max_amount_daily   | String |      日限额           |
-|   max_amount_monthly   | String |   月限额           |
-|   available_balance   | String |   可用余额           |
 
 
 
