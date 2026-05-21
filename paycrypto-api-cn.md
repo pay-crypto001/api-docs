@@ -14,12 +14,13 @@
      - [1.8 法币账户查询](#法币账户查询)
 - [2.KYC](#KYC)
      - [2.1 提交用户 KYC 数据](#提交用户-KYC-数据)
-     - [2.2 提交用户KYC附件(可选)](#提交用户KYC附件-可选)
-     - [2.3 查询所有用户 KYC 记录](#查询所有用户-KYC-记录)
-     - [2.4 查询指定用户 KYC 记录](#查询指定用户-KYC-记录)
-     - [2.5 更新用户 KYC_info 信息（可选）](#更新用户-KYC-信息)
-     - [2.6 更新用户账单地址信息](#更新用户地址信息)
-     - [2.7 查询指定用户 KYC 信息](#查询指定用户-KYC-信息)
+     - [2.2 提交用户 数据 免KYC](#提交用户-数据-免KYC)
+     - [2.3 提交用户KYC附件(可选)](#提交用户KYC附件-可选)
+     - [2.4 查询所有用户 KYC 记录](#查询所有用户-KYC-记录)
+     - [2.5 查询指定用户 KYC 记录](#查询指定用户-KYC-记录)
+     - [2.6 更新用户 KYC_info 信息（可选）](#更新用户-KYC-信息)
+     - [2.7 更新用户账单地址信息](#更新用户地址信息)
+     - [2.8 查询指定用户 KYC 信息](#查询指定用户-KYC-信息)
 - [3.开卡和激活](#开卡和激活)
      - [3.1 提交用户开卡申请](#提交用户开卡申请)
      - [3.2 提交激活卡需要的附件](#提交激活卡需要的附件)
@@ -579,6 +580,64 @@ method：POST
 |   address | String |必填 |通讯地址，银行卡会寄到该地址。字符长度最大256|
 |   zipcode | String |必填 |邮编，字符长度最大20|
 | card_type_id |String |必填 |银行卡种类对应的id,比如 10010001|
+|   maiden_name | String |选填 |妈妈的名字（可以填no），字符长度最大255|
+|   kyc_info | String |选填 |KYC 其他信息|
+| mail_verification_code | String |选填 |邮箱验证码|
+| mail_token | String |选填|发送邮件后返回的token|
+| cust_tx_id | String | 选填| KYC流水号|
+| sign_img | String | 选填| 签名照片。base64编码，照片文件大小应小于1M|
+| poa_doc | String[3] |选填 |地址证明照片（暂不支持）。base64编码，照片或PDF文件每个文件大小应小于2M|
+| card_number | String | 选填| 特殊卡种支持，绑卡卡号，用于提前售卡，Native实体卡必填|
+| print_name_on_card | Bool | 选填| 是否印名，Native实体卡必填|
+
+- 响应：
+
+```json
+{
+  "code": 0,
+  "msg": "string",
+  "result": true
+}
+```
+
+> 如何获取 mail_token and mail_verification_code? 请看 "6.1.发送邮箱验证码". mail_verification_code 由用户自己填写.
+
+### 提交用户 数据 免KYC
+
+如果KYC审核失败，也使用这个接口重新提交。
+拥有特定权限的机构与卡种可以调用此API。
+
+```text
+url：/api/v1/customers/accounts-nokyc
+method：POST
+```
+
+
+- 请求：
+
+| Parameter |  Type  |    Requirement  |Description   |
+| :------------: | :----: | :----------: |:---------- |
+|   acct_no | String | 必填 |机构端用户编号(机构端唯一)，字符长度最大64|
+|   acct_name | String |必填 |机构端用户名，字符长度最大64|
+|   first_name | String |必填 |真实用户名，字符长度最大50|
+|   last_name | String |必填 |真实用户姓，字符长度最大50|
+|   country_code | String |必填 |手机国际区号，如“+86”。字符长度最大5|
+|   mobile | String |必填 |手机号，字符长度最大32|
+|  mail | String |必填 |邮箱，不支持163.com的邮箱。字符长度最大64|
+| card_type_id |String |必填 |银行卡种类对应的id,比如 10010001|
+|   gender | String |选填 |male:男，female:女，unknown:其他，字符长度最大6|
+|   birthday | String |选填 |生日（生日格式为"1990-01-01"）|
+|   city | String |选填 |城市，字符长度最大100|
+|   state | String |选填 |省份，字符长度最大100|
+|   country | String |选填 |用户所在国家，字符长度最大50|
+|   nationality | String |选填 |国籍，字符长度最大255|
+| doc_no | String |选填 |证件号码，字符长度最大128|
+| doc_type | String |选填 |证件类型(目前只支持passport): passport: 护照，idcard：身份证，字符长度最大8|
+| front_doc | String |选填 |正面照。base64编码, 照片文件大小应小于2M|
+| back_doc | String |选填 |反面照，doc_type是idcard时必须填写。base64编码，照片文件大小应小于2M|
+| mix_doc | String |选填 |手持证件照。base64编码，照片文件大小应小于2M|
+|   address | String |选填 |通讯地址，银行卡会寄到该地址。字符长度最大256|
+|   zipcode | String |选填 |邮编，字符长度最大20|
 |   maiden_name | String |选填 |妈妈的名字（可以填no），字符长度最大255|
 |   kyc_info | String |选填 |KYC 其他信息|
 | mail_verification_code | String |选填 |邮箱验证码|
