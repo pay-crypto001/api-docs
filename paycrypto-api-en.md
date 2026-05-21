@@ -13,12 +13,13 @@
      * [1.7 Estimate the deposit amount of crypto](#Estimate-the-deposit-amount-of-crypto)
 * [2.KYC](#KYC)
      * [2.1 Submitting user KYC data](#Submitting-user-KYC-data)
-	 * [2.2 Submitting user KYC attachment (optional)](#Submitting-user-KYC-attachment-optional)
-     * [2.3 Query all KYC records](#Query-all-KYC-records)
-     * [2.4 Query a specific user KYC records](#Query-a-specific-user-KYC-records)
-     * [2.5 Update user KYC_info information (optional)](#Update-user-KYC-info-optional)
-     * [2.6 Update user billing address information](#Update-user-billing-address-information)
-     * [2.7 Query specific user KYC information](#Query-specific-user-KYC-information)
+     * [2.2 Submitting user data noKYC](#Submitting-user-data-noKYC)
+	 * [2.3 Submitting user KYC attachment (optional)](#Submitting-user-KYC-attachment-optional)
+     * [2.4 Query all KYC records](#Query-all-KYC-records)
+     * [2.5 Query a specific user KYC records](#Query-a-specific-user-KYC-records)
+     * [2.6 Update user KYC_info information (optional)](#Update-user-KYC-info-optional)
+     * [2.7 Update user billing address information](#Update-user-billing-address-information)
+     * [2.8 Query specific user KYC information](#Query-specific-user-KYC-information)
 * [3.Cards](#cards)
      * [3.1 Apply a card](#Apply-a-card)
      * [3.2 Submit active card attachment](#submit-active-card-attachment)
@@ -573,6 +574,64 @@ method：POST
 
 > How to get mail_token and mail_verification_code? Please see "6.1. Sending Email verification code". mail_verification_code is filled by user.
 
+### Submitting user data noKYC
+
+Email verification feature is optional. The verification code status is updated to used when verification is successfully carried out.
+Only customers with specific permissions and designated card type IDs are authorized to call this API.
+
+- Request:
+
+```text
+url：/api/v1/customers/accounts
+method：POST
+```
+
+
+
+|       Parameter        |  Type  | Whether Required |                                          Description                                          |
+| :--------------------: | :----: | :--------------: | :-------------------------------------------------------------------------------------------: |
+|        acct_no         | String |     Required     |         Account serial no. (Unique within the institution), Max. character length: 64         |
+|       acct_name        | String |     Required     |                      Institution account name, Max. character length: 64                      |
+|       first_name       | String |     Required     |                          Legal first name, Max. character length: 50                          |
+|       last_name        | String |     Required     |                          Legal last name, Max. character length: 50                           |
+|      country_code      | String |     Required     | International country code，for example "+86". Max. character length: 5 |
+|         mobile         | String |     Required     |                           Mobile number, Max. character length: 32                            |
+|          mail          | String |     Required     |                           Email address,don't support 163.com email host. Max. character length: 64                            |
+| card_type_id |String |Required | Bank card type id, for example: 10010001|   
+|         gender         | String |     Optional     |             male: Male，female: Female，unknown: other, Max. character length: 6              |
+|        birthday        | String |     Optional     |                                    Birth date (YYYY-MM-DD)                                    |
+|          city          | String |     Optional     |                               City, Max. character length: 100                                |
+|         state          | String |     Optional     |                               State, Max. character length: 100                               |
+|        country         | String |     Optional     |                              Country, Max. character length: 50                               |
+|      nationality       | String |     Optional     |                           Nationality，, Max. character length: 255                           |
+|         doc_no         | String |     Optional     |                                        Document number                                        |
+|        doc_type        | String |     Optional     | Document type(Only support passport). passport：Passport，idcard：National ID card |
+|       front_doc        | String |     Optional     |                              Front face picture. Base64 encoding. File size should be less than 2M  |
+|        back_doc        | String |     Optional     |                              Back face picture. Required if doc_type is idcard. Base64 encoding. File size should be less than 2M              |
+|        mix_doc         | String |     Optional     |                            Photo with certificate in hand. Base64 encoding. File size should be less than 2M |
+|        address         | String |     Optional     |                          Postal address, the bank card will send tothis address. Max. character length: 256                           |
+|        zipcode         | String |     Optional     |                              Zip code, Max. character length: 20                              |
+|      maiden_name       | String |     Optional      |                        Your Mother name or put any relative Friend name, Max. character length: 255                         |
+|        kyc_info        | String |     Optional     |                                     Other KYC information                                     |
+| mail_verification_code | String |     Optional     |                                    Email verification code                                    |
+|       mail_token       | String |     Optional     |                        Token returned upon sending verification Email                         |
+| cust_tx_id            | String | Optional         | customer transaction id|
+| sign_img | String | Optional| hand signature image. Base64 encoding. File size should be less than 1M |
+| poa_doc | String[3] |Optional |Picture or PDF of proof of address(Currently not supported). Base64 encoding. Each file size should be less than 2M|
+| card_number | String |Optional | only support for special cards. sell card to the user first then user to do KYC. If this is a native physical card, this value is required        |
+| print_name_on_card | String |Optional | only support for special cards. Specifies whether the cardholder's name should be printed on the card. If this is a native physical card, this value is required  |
+
+- Response:
+
+```json
+{
+  "code": 0,
+  "msg": "string",
+  "result": true
+}
+```
+
+> How to get mail_token and mail_verification_code? Please see "6.1. Sending Email verification code". mail_verification_code is filled by user.
 
 ### Submitting user KYC attachment (optional)
 
