@@ -972,7 +972,12 @@ method：PUT
 {
   "code": 0,
   "msg": "string",
-  "result": true
+  "result": {
+    "card_type_id":"72000001",
+    "card_no":"4360396720000016920",
+    "acct_no":"test20240529",
+    "status":1
+  }
 }
 ```
 
