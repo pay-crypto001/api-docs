@@ -1888,7 +1888,9 @@ method：POST
                   "tx_id": "54675678678",
                   "description": "MONTHLY FEE",
                   "debit": "2.50",
-                  "debit_usd": "2.50",                  
+                  "debit_usd": "2.50",
+				  "settlement_amount": "2.50",
+				  "settlement_amount_usd": "2.50",                  
                   "credit": "",
                   "credit_usd": "",
 				  "transaction_time": 1757570339000,
@@ -1904,7 +1906,9 @@ method：POST
                   "tx_id": "54675678677",
                   "description": "MONTHLY FEE",
                   "debit": "2.50",
-                  "debit_usd": "2.50",                  
+                  "debit_usd": "2.50",
+				  "settlement_amount": "2.50",
+				  "settlement_amount_usd": "2.50",                  
                   "credit": "",
                   "credit_usd": "",
 				  "transaction_time": 1757570339000,
@@ -1937,6 +1941,8 @@ method：POST
 |   bank_tx_list[0].description    | String | Description                                                        |
 |      bank_tx_list[0].debit       | String | Debit amount(card currency)                                                       |
 |      bank_tx_list[0].debit_usd       | String | Debit amount(USD)                                                       |
+|   bank_tx_list[0].settlement_amount   | String | This value is only generated after successful consumption.  If it differs from the transaction amount, the card deduction amount shall be subject to the settlement amount.  |
+|   bank_tx_list[0].settlement_amount_usd   | String | This value is only generated after successful consumption.  If it differs from the transaction amount, the card deduction amount shall be subject to the settlement amount.  |
 |      bank_tx_list[0].credit      | String | Credit amount(card currency)                                                      |
 |      bank_tx_list[0].credit_usd      | String | Credit amount(USD)                                                      |
 |   bank_tx_list[0].fee   | String | fee  |
