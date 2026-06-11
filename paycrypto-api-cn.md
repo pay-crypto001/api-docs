@@ -2696,6 +2696,8 @@ method：POST
                   "description": "MONTHLY FEE",
                   "debit": "2.50",
                   "debit_usd": "2.50",
+				  "settlement_amount": "2.50",
+				  "settlement_amount_usd": "2.50",
                   "credit": "",
                   "credit_usd": "",
 				  "transaction_time": 1757570339000,
@@ -2712,6 +2714,8 @@ method：POST
                   "description": "MONTHLY FEE",
                   "debit": "2.50",
                   "debit_usd": "2.50",
+				  "settlement_amount": "2.50",
+				  "settlement_amount_usd": "2.50",
                   "credit": "",
                   "credit_usd": "",
 				  "transaction_time": 1757570339000,
@@ -2744,6 +2748,8 @@ method：POST
 |   bank_tx_list[0].description   | String | 描述  |
 |   bank_tx_list[0].debit   | String | 消费金额(卡支持的货币)  |
 |   bank_tx_list[0].debit_usd   | String | 消费金额(USD)  |
+|   bank_tx_list[0].settlement_amount   | String | 结算金额(消费成功才有值，与消费金额不一致时，以结算金额为准)  |
+|   bank_tx_list[0].settlement_amount_usd   | String | 结算金额(消费成功才有值，与消费金额不一致时，以结算金额为准)  |
 |   bank_tx_list[0].credit   | String | 存入金额(卡支持的货币)   |
 |   bank_tx_list[0].credit_usd   | String | 存入金额(USD)  |
 |   bank_tx_list[0].fee   | String | 手续费，只有部分卡有值。  |
