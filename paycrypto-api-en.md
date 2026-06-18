@@ -65,10 +65,11 @@
      * [7.2 Push Card Apply Event](#Push-Card-Apply-Event)
      * [7.3 Push Card Activation Event](#Push-Card-Activation-Event)
      * [7.4 Push Deposit Event](#Push-Deposit-Event)
-     * [7.5 Test push events](#Test-push-events)
-     * [7.6 Query push failure events](#Query-push-failure-events)
-     * [7.7 Update push failure events](#Update-push-failure-events)
-     * [7.8 Push Lock, Unlock, Lost, Renew PIN, Replacement card Status](#Push-Lock-Unlock-Lost-Renew-PIN-Replacement-card-Status)
+     * [7.5 One time password](#One-time-password)
+     * [7.6 Test push events](#Test-push-events)
+     * [7.7 Query push failure events](#Query-push-failure-events)
+     * [7.8 Update push failure events](#Update-push-failure-events)
+     * [7.9 Push Lock, Unlock, Lost, Renew PIN, Replacement card Status](#Push-Lock-Unlock-Lost-Renew-PIN-Replacement-card-Status)
 * [8.Error Codes](#error-codes)
      * [8.1 Business Logic Error Codes](#Business-Logic-Error-Codes)
      * [8.2 Identity Authentication Error Codes](#Identity-Authentication-Error-Codes)
@@ -2566,7 +2567,7 @@ events[n] element convert string to json:
 }
 ```
 
-### Push Deposit Event
+### 
 
 | Parameter| Type|Description |
 | --- | --- |--- |
