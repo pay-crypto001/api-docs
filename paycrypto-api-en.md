@@ -23,7 +23,7 @@
 * [3.Cards](#cards)
      * [3.1 Apply a card](#Apply-a-card)
      * [3.2 Submit active card attachment](#submit-active-card-attachment)
-     * [3.3 User activating bank card](#User-activating-bank-card)
+     * [3.3 User activating card](#User-activating-card)
      * [3.4 Query all active card status](#Query-all-active-card-status)
      * [3.5 Query a specific user card activation status](#Query-a-specific-user-card-activation-status)
      * [3.6 Request Lock, Unlock, Lost, Renew PIN, Replacement card](#Request-Lock-Unlock-Lost-Renew-PIN-Replacement-card)
