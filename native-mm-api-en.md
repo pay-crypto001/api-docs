@@ -24,8 +24,8 @@ Dashboard :
 
 API :
 
-* Test environment: https://mmapi-sandbox.paycrypto.com/
-* Production environment: https://mmapi.paycrypto.com/
+* Test environment: https://mmapi-sandbox.native.financial/
+* Production environment: https://mmapi.native.financial/
 
 ## API Specifications
 
