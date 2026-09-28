@@ -97,7 +97,7 @@
      - [10.9 查询推送失败的事件](#查询推送失败的事件)
      - [10.10 更新推送失败的事件](#更新推送失败的事件)
      - [10.11 推送冻结、解冻、挂失、重置密码、补卡状态](#推送冻结-解冻-挂失-重置密码-补卡状态)
-     - [10.12 推送Apple Pay和Google Pay和Samsung Pay OTP验证码](#推送Apple-Pay和Samsung Pay和Google-Pay-OTP验证码)
+     - [10.12 推送Apple Pay和Google Pay OTP验证码](#推送Apple-Pay和Google-Pay-OTP验证码)
 - [11.错误码](#错误码)
      - [11.1 业务逻辑错误码](#业务逻辑错误码)
      - [11.2 身份权限认证错误码](#身份权限认证错误码)
@@ -3653,7 +3653,7 @@ events 数组元素从 string 转成 json:
 }
 ```
 
-### 推送Apple Pay和Google Pay OTP和Samsung Pay验证码
+### 推送Apple Pay和Google Pay OTP验证码
 
 特殊卡种的卡绑定Apple Pay或者Google Pay或者Samsung Pay时，推送OTP验证码
 
