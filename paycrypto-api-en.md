@@ -2845,7 +2845,7 @@ events element convert string to json:
 
 ### Push Apple Pay and Google Pay OTP
 
-When a card of a special card type is bound to Apple Pay or Google Pay, an OTP is pushed.
+When a card of a special card type is bound to Apple Pay or Google Pay or Samsung Pay, an OTP is pushed.
 
 | Name | Type | Description |
 | --- | --- | --- |
@@ -2853,7 +2853,7 @@ When a card of a special card type is bound to Apple Pay or Google Pay, an OTP i
 | events[n].params.card_no | String | Card ID |
 | events[n].params.email | String | Email |
 | events[n].params.otp | String | OTP code |
-| events[n].params.wallet_type | String | Wallet type (GOOGLE_PAY, APPLE_PAY) |
+| events[n].params.wallet_type | String | Wallet type (GOOGLE_PAY, APPLE_PAY、SAMSUNG_PAY ) |
 
 Example:
 ```
