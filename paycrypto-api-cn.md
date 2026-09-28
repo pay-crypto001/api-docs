@@ -3655,7 +3655,7 @@ events 数组元素从 string 转成 json:
 
 ### 推送Apple Pay和Google Pay OTP验证码
 
-特殊卡种的卡绑定Apple Pay或者Google Pay时，推送OTP验证码
+特殊卡种的卡绑定Apple Pay或者Google Pay或者Samsung Pay时，推送OTP验证码
 
 | 名称| 类型|描述 |
 | --- | --- |--- |
@@ -3663,7 +3663,7 @@ events 数组元素从 string 转成 json:
 | events[n].params.card_no |String | 卡id |
 | events[n].params.email |String | 邮箱 |
 | events[n].params.otp |String | 验证码 |
-| events[n].params.wallet_type |String | 钱包类型（GOOGLE_PAY、APPLE_PAY ） |
+| events[n].params.wallet_type |String | 钱包类型（GOOGLE_PAY、APPLE_PAY、SAMSUNG_PAY  ） |
 
 示例：
 ```
