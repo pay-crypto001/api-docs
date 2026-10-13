@@ -368,14 +368,13 @@ method：GET
 
 
 
-### Apply for SGB virtual account
+### Apply for virtual account
 
-Apply for an SGB virtual account. This API only creates a **local application record** with review status `0-PENDING_REVIEW`; the platform ops team then reviews the application, and the virtual account is created at the upstream bank after approval. Use `GET /api/v1/mm/sgb/va/list` to poll the review result and the assigned account number.
-
+Apply for a virtual account. This API only creates a **local application record** with review status `0-PENDING_REVIEW`; the platform ops team then reviews the application, and the virtual account is created at the upstream bank after approval. Use `GET /api/v1/mm/va/list` to poll the review result and the assigned account number.
 
 
 ```text
-url：/api/v1/mm/sgb/va/apply
+url：/api/v1/mm/va/apply
 method：POST
 ```
 
@@ -383,42 +382,34 @@ method：POST
 
 |  Parameter  | Type  | Whether Required |                        Description                         |
 | :---------: | :---: | :--------------: | :-------------------------------------------------------- |
-| master_acct_ccy  |  String  |    Required     | Master account currency, e.g. `USD`     |
+| currency  |  String  |    Required     | Virtual account currency, e.g. `USD`     |
 | mail  |  String  |    Optional     | Contact email. Defaults to the registered email of the authenticated customer    |
-| kyc  |  Object  |    Optional     | KYC info. When omitted, the platform fills it automatically from the reviewed KYC/KYB data in the system    |
-
-- `kyc` object:
-
-|  Parameter  | Type  | Whether Required |                        Description                         |
-| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
-| client_type  |  String  |    Optional     | Account holder type: `retail` / `corporate`     |
-| full_name  |  String  |    Optional     | Account holder full name (individual name / company legal name)    |
+| client_type  |  String  |    Required     | Account holder type: `retail` / `corporate`     |
+| full_name  |  String  |    Required     | Account holder full name (individual name / company legal name)    |
 | nationality  |  String  |    Required when `client_type=retail`     | Nationality, 3-letter country code    |
-| country  |  String  |    Optional     | Country, 3-letter country code    |
-| city  |  String  |    Optional     | City    |
-| address  |  String  |    Optional     | Address    |
-| date  |  String  |    Optional     | Format `ddMMyyyy`. Date of birth for `retail`, incorporation date for `corporate`    |
+| country  |  String  |    Required     | Country, 3-letter country code    |
+| city  |  String  |    Required     | City    |
+| address  |  String  |    Required     | Address    |
+| date  |  String  |    Required     | Format `ddMMyyyy`. Date of birth for `retail`, incorporation date for `corporate`    |
 | id_type  |  String  |    Required when `client_type=retail`     | `P`-Passport, `N`-National ID    |
-| id_number  |  String  |    Optional     | ID number for `retail` / company registration number for `corporate`    |
+| id_number  |  String  |    Required     | ID number for `retail` / company registration number for `corporate`    |
 | corporate_type  |  String  |    Optional     | `FI` / `NON_FI`, only for `corporate`. Defaults to `NON_FI` when blank    |
 
 - Request example:
 
 ```json
 {
-    "master_acct_ccy": "USD",
+    "currency": "USD",
     "mail": "customer@example.com",
-    "kyc": {
-        "client_type": "retail",
-        "full_name": "John Michael Doe",
-        "nationality": "SGP",
-        "country": "SGP",
-        "city": "Singapore",
-        "address": "1 Raffles Place",
-        "date": "01011990",
-        "id_type": "P",
-        "id_number": "E1234567A"
-    }
+    "client_type": "retail",
+    "full_name": "John Michael Doe",
+    "nationality": "SGP",
+    "country": "SGP",
+    "city": "Singapore",
+    "address": "1 Raffles Place",
+    "date": "01011990",
+    "id_type": "P",
+    "id_number": "E1234567A"
 }
 ```
 
@@ -430,7 +421,8 @@ method：POST
     "msg": "SUCCESS",
     "result": {
         "id": 12,
-        "master_acct_ccy": "USD",
+        "currency": "USD",
+        "mail": "customer@example.com",
         "virtual_acct_no": null,
         "virtual_iban": null,
         "virtual_acct_status": null,
@@ -445,18 +437,19 @@ method：POST
 | Parameter |  Type  |          Description          |
 | :--------: | :----: | :------------------------------ |
 |   id   | long |        Local application record id              |
-|   master_acct_ccy   | String |        Master account currency              |
+|   currency   | String |        Virtual account currency              |
+|   mail   | String |        Contact email used for the application              |
 |   virtual_acct_no   | String |        Virtual account number, assigned after approval (`null` before that)              |
 |   virtual_iban   | String |        Virtual IBAN, assigned after approval (`null` before that)              |
 |   virtual_acct_status   | String |        Virtual account status reported by the bank (available after approval)              |
 |   created_and_assigned   | int |        Review status: `0`-PENDING_REVIEW, `1`-APPROVED (account created), `2`-REJECTED, `3`-CREATE_FAILED (can be reviewed again)              |
-|   err_msg   | String |        Reject / failure reason              |
+|   reason   | String |        Reject / failure reason              |
 |   create_time / update_time   | long |        `UNIX` timestamp, unit: `milliseconds`              |
 
 
-### Query SGB virtual account list
+### Query virtual account list
 
-Query all SGB virtual account applications/accounts of the authenticated customer, including the review status and the assigned virtual account number after approval. Typically used to poll the review result after `apply`.
+Query all virtual account applications/accounts of the authenticated customer, including the review status and the assigned virtual account number after approval. Typically used to poll the review result after `apply`.
 
 ```text
 url：/api/v1/mm/sgb/va/list
@@ -474,23 +467,25 @@ method：GET
     "result": [
         {
             "id": 12,
-            "master_acct_ccy": "USD",
+            "currency": "USD",
+            "mail": "customer@example.com",
             "virtual_acct_no": "847201935762",
-            "virtual_iban": "SG83SGBK0000847201935762",
+            "virtual_iban": "SG83BANK0000847201935762",
             "virtual_acct_status": "ACTIVE",
             "created_and_assigned": 1,
-            "err_msg": null,
+            "reason": null,
             "create_time": 1768464200000,
             "update_time": 1768550600000
         },
         {
             "id": 10,
-            "master_acct_ccy": "EUR",
+            "currency": "EUR",
+            "mail": "ops@example.com",
             "virtual_acct_no": null,
             "virtual_iban": null,
             "virtual_acct_status": null,
             "created_and_assigned": 2,
-            "err_msg": "KYC address incomplete",
+            "reason": "KYC address incomplete",
             "create_time": 1768377800000,
             "update_time": 1768464200000
         }
@@ -501,12 +496,13 @@ method：GET
 | Parameter |  Type  |          Description          |
 | :--------: | :----: | :------------------------------ |
 |   id   | long |        Local application record id              |
-|   master_acct_ccy   | String |        Master account currency              |
+|   currency   | String |        Virtual account currency              |
+|   mail   | String |        Contact email used for the application              |
 |   virtual_acct_no   | String |        Virtual account number, assigned after approval (`null` before that)              |
 |   virtual_iban   | String |        Virtual IBAN, assigned after approval (`null` before that)              |
 |   virtual_acct_status   | String |        Virtual account status reported by the bank (available after approval)              |
 |   created_and_assigned   | int |        Review status: `0`-PENDING_REVIEW, `1`-APPROVED (account created), `2`-REJECTED, `3`-CREATE_FAILED (can be reviewed again)              |
-|   err_msg   | String |        Reject / failure reason              |
+|   reason   | String |        Reject / failure reason              |
 |   create_time / update_time   | long |        `UNIX` timestamp, unit: `milliseconds`              |
 
 
