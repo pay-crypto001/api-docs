@@ -368,6 +368,144 @@ method：GET
 
 
 
+### Apply for virtual account
+
+Apply for a virtual account. This API only creates a **local application record** with review status `0-PENDING_REVIEW`; the platform ops team then reviews the application, and the virtual account is created at the upstream bank after approval. Use `GET /api/v1/mm/va/list` to poll the review result and the assigned account number.
+
+
+```text
+url：/api/v1/mm/va/apply
+method：POST
+```
+
+- Request:
+
+|  Parameter  | Type  | Whether Required |                        Description                         |
+| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
+| currency  |  String  |    Required     | Virtual account currency, e.g. `USD`     |
+| mail  |  String  |    Optional     | Contact email. Defaults to the registered email of the authenticated customer    |
+| client_type  |  String  |    Required     | Account holder type: `retail` / `corporate`     |
+| full_name  |  String  |    Required     | Account holder full name (individual name / company legal name)    |
+| nationality  |  String  |    Required when `client_type=retail`     | Nationality, 3-letter country code    |
+| country  |  String  |    Required     | Country, 3-letter country code    |
+| city  |  String  |    Required     | City    |
+| address  |  String  |    Required     | Address    |
+| date  |  String  |    Required     | Format `ddMMyyyy`. Date of birth for `retail`, incorporation date for `corporate`    |
+| id_type  |  String  |    Required when `client_type=retail`     | `P`-Passport, `N`-National ID    |
+| id_number  |  String  |    Required     | ID number for `retail` / company registration number for `corporate`    |
+| corporate_type  |  String  |    Optional     | `FI` / `NON_FI`, only for `corporate`. Defaults to `NON_FI` when blank    |
+
+- Request example:
+
+```json
+{
+    "currency": "USD",
+    "mail": "customer@example.com",
+    "client_type": "retail",
+    "full_name": "John Michael Doe",
+    "nationality": "SGP",
+    "country": "SGP",
+    "city": "Singapore",
+    "address": "1 Raffles Place",
+    "date": "01011990",
+    "id_type": "P",
+    "id_number": "E1234567A"
+}
+```
+
+- Response:
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": {
+        "id": 12,
+        "currency": "USD",
+        "mail": "customer@example.com",
+        "virtual_acct_no": null,
+        "virtual_iban": null,
+        "virtual_acct_status": null,
+        "created_and_assigned": 0,
+        "err_msg": null,
+        "create_time": 1768464200000,
+        "update_time": 1768464200000
+    }
+}
+```
+
+| Parameter |  Type  |          Description          |
+| :--------: | :----: | :------------------------------ |
+|   id   | long |        Local application record id              |
+|   currency   | String |        Virtual account currency              |
+|   mail   | String |        Contact email used for the application              |
+|   virtual_acct_no   | String |        Virtual account number, assigned after approval (`null` before that)              |
+|   virtual_iban   | String |        Virtual IBAN, assigned after approval (`null` before that)              |
+|   virtual_acct_status   | String |        Virtual account status reported by the bank (available after approval)              |
+|   created_and_assigned   | int |        Review status: `0`-PENDING_REVIEW, `1`-APPROVED (account created), `2`-REJECTED, `3`-CREATE_FAILED (can be reviewed again)              |
+|   reason   | String |        Reject / failure reason              |
+|   create_time / update_time   | long |        `UNIX` timestamp, unit: `milliseconds`              |
+
+
+### Query virtual account list
+
+Query all virtual account applications/accounts of the authenticated customer, including the review status and the assigned virtual account number after approval. Typically used to poll the review result after `apply`.
+
+```text
+url：/api/v1/mm/sgb/va/list
+method：GET
+```
+
+- Request: no parameters.
+
+- Response:
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": [
+        {
+            "id": 12,
+            "currency": "USD",
+            "mail": "customer@example.com",
+            "virtual_acct_no": "847201935762",
+            "virtual_iban": "SG83BANK0000847201935762",
+            "virtual_acct_status": "ACTIVE",
+            "created_and_assigned": 1,
+            "reason": null,
+            "create_time": 1768464200000,
+            "update_time": 1768550600000
+        },
+        {
+            "id": 10,
+            "currency": "EUR",
+            "mail": "ops@example.com",
+            "virtual_acct_no": null,
+            "virtual_iban": null,
+            "virtual_acct_status": null,
+            "created_and_assigned": 2,
+            "reason": "KYC address incomplete",
+            "create_time": 1768377800000,
+            "update_time": 1768464200000
+        }
+    ]
+}
+```
+
+| Parameter |  Type  |          Description          |
+| :--------: | :----: | :------------------------------ |
+|   id   | long |        Local application record id              |
+|   currency   | String |        Virtual account currency              |
+|   mail   | String |        Contact email used for the application              |
+|   virtual_acct_no   | String |        Virtual account number, assigned after approval (`null` before that)              |
+|   virtual_iban   | String |        Virtual IBAN, assigned after approval (`null` before that)              |
+|   virtual_acct_status   | String |        Virtual account status reported by the bank (available after approval)              |
+|   created_and_assigned   | int |        Review status: `0`-PENDING_REVIEW, `1`-APPROVED (account created), `2`-REJECTED, `3`-CREATE_FAILED (can be reviewed again)              |
+|   reason   | String |        Reject / failure reason              |
+|   create_time / update_time   | long |        `UNIX` timestamp, unit: `milliseconds`              |
+
+
 ## Webhook
 
 
@@ -464,6 +602,7 @@ events element convert string to json:
 | :---------: | ----------------------------------------------------------- |
 |      0      | Succesful                                                   |
 |   111001    | Request parameter error                                     |
+|   130002    | Data not found                                              |
 
 
 ### Identity Authentication Error Codes
