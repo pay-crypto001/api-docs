@@ -121,7 +121,7 @@ API 使用步骤：
 2. 我们审核通过后，机构才可以登录成功。
 3. 机构登录，查看钱包地址，给钱包充值，支持 USDT、BTC、ETH 等。
 4. 机构登录，创建 Appkey 和 secret，可选择配置 webhook 回调地址。
-5. 调用 API 进行 KYC、开卡、激活卡、充值等操作，状态变更 Paycrypto 会通过回调地址通知机构服务器。
+5. 调用 API 进行 KYC、开卡、激活卡、充值等操作，状态变更 Native 会通过回调地址通知机构服务器。
 
 ![](./imgs/caas/workflow1.jpg)
 
@@ -147,8 +147,8 @@ API 使用步骤：
 
 API 域名：
 
-* 测试环境: https://api-sandbox.paycrypto.com/ , https://api-sandbox.native.financial/
-* 生产环境: https://api.paycrypto.com/ , https://api.native.financial/
+* 测试环境: https://api-sandbox.native.financial/
+* 生产环境: https://api.native.financial/
 
 ## 接口规范
 
