@@ -128,8 +128,8 @@ Dashboard :
 
 API :
 
-* Test environment: https://api-sandbox.paycrypto.com/ , https://api-sandbox.native.financial/
-* Production environment: https://api.paycrypto.com/ , https://api.native.financial/
+* Test environment: https://api-sandbox.native.financial/
+* Production environment: https://api.native.financial/
 
 ## API Specifications
 
