@@ -2121,7 +2121,7 @@ Full integration example (vanilla JS; `/server/...` are your own backend endpoin
   }
 </script>
 ```
-
+> encryt_data decrypt [RSA example](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/RSATest.java#L60) or [ECIES example](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/BankTest.java#L75)
 
 
 ### User triggers a card withdrawal password reset Email (Currently not supported)
