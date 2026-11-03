@@ -1955,7 +1955,7 @@ method：POST
 |   bank_tx_list[0].end_bal   | String |   |
 |   bank_tx_list[0].origin_transaction_id | String |  |
 
-### Query Card Sensitive Info
+### Query card security information
 
 - Request:
 
