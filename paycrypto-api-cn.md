@@ -69,16 +69,17 @@
      - [8.1 查询卡是否激活](#查询卡是否激活)
      - [8.2 查询卡余额](#查询卡余额)
      - [8.3 查询卡账单](#查询卡账单)
-     - [8.4 查询卡敏感信息](#查询卡敏感信息)
-     - [8.5 用户请求重置密码（暂不支持）](#用户请求重置密码-暂不支持-)
-     - [8.6 查询卡已授权交易](#查询卡已授权交易)
-     - [8.7 信用卡月限额修改](#信用卡月限额修改)
-     - [8.8 查询信用卡月限额](#查询信用卡月限额)
-     - [8.9 卡冻结](#卡冻结)
-     - [8.10 卡解冻](#卡解冻)
-     - [8.11 实体卡初始化密码](#实体卡初始化密码)
-     - [8.12 实体卡更新密码](#实体卡更新密码)
-     - [8.13 实体卡重置密码](#实体卡重置密码)
+     - [8.4 查询卡iframe展示参数](#查询卡iframe展示参数)
+     - [8.5 查询卡敏感信息](#查询卡敏感信息)
+     - [8.6 用户请求重置密码（暂不支持）](#用户请求重置密码-暂不支持-)
+     - [8.7 查询卡已授权交易](#查询卡已授权交易)
+     - [8.8 信用卡月限额修改](#信用卡月限额修改)
+     - [8.9 查询信用卡月限额](#查询信用卡月限额)
+     - [8.10 卡冻结](#卡冻结)
+     - [8.11 卡解冻](#卡解冻)
+     - [8.12 实体卡初始化密码](#实体卡初始化密码)
+     - [8.13 实体卡更新密码](#实体卡更新密码)
+     - [8.14 实体卡重置密码](#实体卡重置密码)
 
 - [9.验证码](#验证码-不支持)
      - [9.1 发送邮箱验证码](#发送邮箱验证码)
@@ -2761,6 +2762,35 @@ method：POST
 |   bank_tx_list[0].end_bal   | String | 交易后余额。如果是0，代表没交易后余额  |
 |   bank_tx_list[0].origin_transaction_id | String | 原消费交易id，退款交易才可能有值  |
 
+### 查询卡iframe展示参数
+
+初始化 iframe 前调用本接口获取 `card_id` + `embedded_host`。本接口不调用上游、返回明文，无需解密。
+
+- Request:
+
+```text
+url：/api/v1/bank/cardid
+method：GET
+```
+
+|  Parameter  | Type  | Whether Required |                        Description                         |
+| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
+| card_no  |  String  |    Required     | card no     |
+
+- Response:
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": {
+        "card_id": "card_xxx",
+        "embedded_host": "https://embedded-sandbox.tech.com"
+    }
+}
+```
+
+注意：仅 UQ 卡可调用。
 
 ### 查询卡敏感信息
 
@@ -2826,45 +2856,16 @@ A卡虚拟卡解密：
 
 > encryt_data解密请参考[RSA例子](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/RSATest.java#L60) 或 [ECIES例子](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/BankTest.java#L75)
 
-### 查询卡 iframe 展示参数（UQ 卡）
-
-初始化 iframe 前调用本接口获取 `card_id` + `embedded_host`。本接口不调用上游、返回明文，无需解密。
-
-- Request:
-
-```text
-url：/api/v1/bank/getCardId
-method：GET
-```
-
-|  Parameter  | Type  | Whether Required |                        Description                         |
-| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
-| card_no  |  String  |    Required     | card no     |
-
-- Response:
-
-```json
-{
-    "code": 0,
-    "msg": "SUCCESS",
-    "result": {
-        "card_id": "card_xxx",
-        "embedded_host": "https://embedded-sandbox.tech.com"
-    }
-}
-```
-
-注意：仅 UQ 卡可调用。
 
 ### UQ 卡 iframe 前端对接
 
-> 说明：以下流程中，与 open api 的两次交互（`/api/v1/bank/getCardId`、`/api/v1/bank/virtualcard`）需由**贵方后端**完成调用（virtualcard 回参需解密），再把 `card_id` / `embedded_host` / `token` 下发给前端；页面与 iframe 均不接触 open api 的加密报文。
+> 说明：以下流程中，与 open api 的两次交互（`/api/v1/bank/cardid`、`/api/v1/bank/virtualcard`）需由**贵方后端**完成调用（virtualcard 回参需解密），再把 `card_id` / `embedded_host` / `token` 下发给前端；页面与 iframe 均不接触 open api 的加密报文。
 
 整体流程：
 
 ```
 用户点击"查看卡信息"
-  → ① 贵方后端调 GET /api/v1/bank/getCardId，拿到 card_id + embedded_host（明文）
+  → ① 贵方后端调 GET /api/v1/bank/cardid，拿到 card_id + embedded_host（明文）
   → ② 前端加载 iframe（不带 token）：
        {embedded_host}/iframe/card/?cardId={card_id}&parent_origin={贵方页面origin}&lang=zh&layout=card
   → ③ iframe 生成密钥对，postMessage 通知前端：{ type: "uq:jkt", jkt: "<43字符>" }
@@ -2892,8 +2893,8 @@ method：GET
   var CARD_NO = '...';  // 当前卡片
   var frame = document.getElementById('secure-card');
 
-  // ① 贵方后端调 open api GET /api/v1/bank/getCardId，明文返回 card_id + embedded_host
-  fetch('/server/card/getCardId?card_no=' + encodeURIComponent(CARD_NO))
+  // ① 贵方后端调 open api GET /api/v1/bank/cardid，明文返回 card_id + embedded_host
+  fetch('/server/card/cardid?card_no=' + encodeURIComponent(CARD_NO))
     .then(r => r.json()).then(function (info) {
       if (!info || !info.card_id || !info.embedded_host) return; // 其他展示方式（明文）从略
       startSecureIframe(info.card_id, info.embedded_host);
