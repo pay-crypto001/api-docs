@@ -2808,8 +2808,11 @@ RSA：
 {"card_number":"123456789101212"}
 
 虚拟卡解密：
-{"cvv":"123","card_number":"1001022400001101","expire":"022022","iframe_url":"https://embedded-sandbox.tech.com/iframe/card?token=pan_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X2lkIjoiZDU3ZjBlZDU"}
-如果iframe_url有值但cvv是***，说明用户只能打开iframe_url查看CVV和过期时间。
+{"cvv":"123","card_number":"1001022400001101","expire":"022022"}
+
+特殊卡虚拟卡解密（iframe 展示）：
+{"cvv":"***","card_number":"1001022400001101","expire":"******","card_id":"card_xxx","embedded_host":"https://embedded-sandbox.tech.com"}
+当返回 card_id 和 embedded_host 时，说明该卡的 CVV 和过期时间只能在托管 iframe 中查看，对接流程见下文"特殊卡 iframe 前端对接"。
 
 A卡虚拟卡解密：
 {"cvv":"***","card_number":"****************","expire":"******"，"password":"343545"}
@@ -2821,6 +2824,109 @@ A卡虚拟卡解密：
 |  public_key  |  String    |  公钥    |
 
 > encryt_data解密请参考[RSA例子](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/RSATest.java#L60) 或 [ECIES例子](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/BankTest.java#L75)
+
+### 获取卡敏感信息展示 token
+
+当查询卡敏感信息返回 `card_id` + `embedded_host` 时，携带 iframe 生成的 `jkt` 调用本接口换取展示 token，token 回传给 iframe 后由其渲染卡号/有效期/CVV。
+
+- Request:
+
+```text
+url：/api/v1/bank/card/pan-token
+method：POST（也支持 GET，参数放在 query 中）
+```
+
+|  Parameter  | Type  | Whether Required |                        Description                         |
+| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
+| card_no  |  String  |    Required     | card no     |
+| jkt  |  String  |    Required     | iframe 生成的密钥对指纹（43 个 base64url 字符），由 iframe 的 `uq:jkt` postMessage 事件提供     |
+| publickey  |  String  |  Optional     | 我们会使用这个公钥替代默认的公钥加密数据，支持ECIES和RSA   |
+
+- Response:
+
+```
+加密结构与查询卡敏感信息接口一致，解密后内容：
+{"token":"pan_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...","card_id":"card_xxx","embedded_host":"https://embedded-sandbox.tech.com"}
+```
+
+注意：
+
+- 仅 特殊卡可调用；`jkt` 来自 iframe 运行期事件，无法提前调用
+- token 与发起握手的 iframe 密钥对绑定，单次有效、短期过期，**不要缓存、不要提前签发、不要记日志**
+- 每次重新展示需重建 iframe 获取新 `jkt` 后重新换取 token
+
+### 特殊卡 iframe 前端对接
+
+> 说明：以下流程中，与 open api 的两次交互（`/api/v1/bank/virtualcard`、`/api/v1/bank/card/pan-token`）需由**贵方后端**完成调用并解密，再把 `card_id` / `embedded_host` / `token` 下发给前端；页面与 iframe 均不接触 open api 的加密报文。
+
+整体流程：
+
+```
+用户点击"查看卡信息"
+  → ① 贵方后端调 POST /api/v1/bank/virtualcard，解密回参
+  → 回参含 card_id + embedded_host 时，走安全 iframe 流程：
+      ② 前端加载 iframe（不带 token）：
+         {embedded_host}/iframe/card/?cardId={card_id}&parent_origin={贵方页面origin}&lang=zh&layout=card
+      ③ iframe 生成密钥对，postMessage 通知前端：{ type: "uq:jkt", jkt: "<43字符>" }
+      ④ 前端通知贵方后端带 jkt 调 POST /api/v1/bank/card/pan-token，解密得到 token
+      ⑤ 前端 postMessage 回传 iframe：{ type: "uq:token", token }，targetOrigin = embedded_host
+      ⑥ iframe 兑换 token 并渲染卡号/有效期/CVV（默认遮罩）
+```
+
+关键规则：
+
+- 监听 `window.message` 时必须先校验 `event.origin === embedded_host` 且 `event.source === iframe.contentWindow`
+- 回传 `uq:token` 的 `targetOrigin` 必须是 `embedded_host`，**不能用 `*`**
+- `uq:resize` 事件：按 `msg.height` 调整 iframe 高度
+- `uq:error` 事件：展示错误，重试 = 重建 iframe 重新走 ②~⑤（token 一次性，必须拿新 jkt 重新换取）
+- 页面必须是安全上下文（HTTPS，本地 `localhost` 除外）；CSP 需将 `embedded_host` 加入 `frame-src`
+
+完整对接示例（原生 JS，`/server/...` 为贵方后端接口，内部封装对 open api 的调用与解密）：
+
+```html
+<iframe id="secure-card" width="480" height="400" frameborder="0"
+  sandbox="allow-scripts allow-same-origin" allow="clipboard-write"
+  title="Secure Card"></iframe>
+<script>
+  var CARD_NO = '...';  // 当前卡片
+  var frame = document.getElementById('secure-card');
+
+  // ① 贵方后端调 open api POST /api/v1/bank/virtualcard 并解密，返回 card_id + embedded_host
+  fetch('/server/card/info?card_no=' + encodeURIComponent(CARD_NO))
+    .then(r => r.json()).then(function (info) {
+      if (!info || !info.card_id || !info.embedded_host) return; // 其他展示方式（明文）从略
+      startSecureIframe(info.card_id, info.embedded_host);
+    });
+
+  function startSecureIframe(cardId, host) {
+    // ② 加载 iframe（不带 token）
+    frame.src = host + '/iframe/card/?cardId=' + encodeURIComponent(cardId)
+      + '&parent_origin=' + encodeURIComponent(location.origin)
+      + '&lang=zh&layout=card';
+
+    window.addEventListener('message', function onMessage(e) {
+      if (e.origin !== host || e.source !== frame.contentWindow) return;
+      var msg = e.data || {};
+
+      // ③ iframe 就绪并给出 jkt → ④ 贵方后端带 jkt 调 open api POST /api/v1/bank/card/pan-token 换取 token
+      if (msg.type === 'uq:jkt') {
+        fetch('/server/card/pan-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ card_no: CARD_NO, jkt: msg.jkt })
+        }).then(r => r.json()).then(function (j) {
+          // ⑤ 把 token 回传给 iframe（targetOrigin 必须是 embedded_host）
+          frame.contentWindow.postMessage(
+            { type: 'uq:token', token: j.token }, host);
+        });
+      }
+      if (msg.type === 'uq:resize') frame.style.height = Math.ceil(msg.height) + 'px';
+      if (msg.type === 'uq:error') console.warn('card error', msg.code); // 重试需重建 iframe 重新走 ②~⑤
+    });
+  }
+</script>
+```
+
 
 ### 用户请求重置密码（暂不支持）
 
