@@ -45,16 +45,17 @@
      * [5.1 Query card status](#Query-card-status)
      * [5.2 Query account balance](#Query-account-balance)
      * [5.3 Query transaction records](#Query-transaction-records)
-     * [5.4 Query card information](#Query-card-information)
-     * [5.5 User triggers a card withdrawal password reset Email (Currently not supported)](#User-triggers-a-card-withdrawal-password-reset-Email-(Currently-not-supported))
-     * [5.6 Query authorized card transactions](#Query-authorized-card-transactions)
-     * [5.7 Modify credit card monthly limit](#Modify-credit-card-monthly-limit)
-     * [5.8 Query credit card monthly limit](#Query-credit-card-monthly-limit)
-     * [5.9 Freeze](#Freeze)
-     * [5.10 Unfreeze](#Unfreeze)
-     * [5.11 Initialize physical card password](#Initialize-physical-card-password)
-     * [5.12 Update physical card password](#Update-physical-card-password)
-     * [5.13 Reset physical card password](#Reset-physical-card-password)
+     * [5.4 Query Card Iframe Display Parameters](#Query-Card-Iframe-Display-Parameters)
+     * [5.5 Query card information](#Query-card-information)
+     * [5.6 User triggers a card withdrawal password reset Email (Currently not supported)](#User-triggers-a-card-withdrawal-password-reset-Email-(Currently-not-supported))
+     * [5.7 Query authorized card transactions](#Query-authorized-card-transactions)
+     * [5.8 Modify credit card monthly limit](#Modify-credit-card-monthly-limit)
+     * [5.9 Query credit card monthly limit](#Query-credit-card-monthly-limit)
+     * [5.10 Freeze](#Freeze)
+     * [5.11 Unfreeze](#Unfreeze)
+     * [5.12 Initialize physical card password](#Initialize-physical-card-password)
+     * [5.13 Update physical card password](#Update-physical-card-password)
+     * [5.14 Reset physical card password](#Reset-physical-card-password)
 * [6.Verification Code API](#Verification-Code-API)
      * [6.1 Sending Email verification code](#Sending-Email-verification-code)
      * [6.2 Email verification code validation](#Email-verification-code-validation)
@@ -1955,7 +1956,38 @@ method：POST
 |   bank_tx_list[0].end_bal   | String |   |
 |   bank_tx_list[0].origin_transaction_id | String |  |
 
-### Query card security information
+
+### Query Card Iframe Display Parameters
+
+Call this API before initializing the iframe to obtain `card_id` + `embedded_host`. This API does not call the upstream and returns plaintext — no decryption needed.
+
+- Request:
+
+```text
+url: /api/v1/bank/cardid
+method: GET
+```
+
+|  Parameter  | Type  | Whether Required |                        Description                         |
+| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
+| card_no  |  String  |    Required     | card no     |
+
+- Response:
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "result": {
+        "card_id": "card_xxx",
+        "embedded_host": "https://embedded-sandbox.tech.com"
+    }
+}
+```
+
+Note: only available for UQ cards.
+
+### Query card information
 
 - Request:
 
@@ -2019,45 +2051,16 @@ A-card virtual card (decrypted):
 
 > For decrypting encrypt_data, please refer to the [RSA example](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/RSATest.java#L60) or the [ECIES example](https://github.com/pay-crypto001/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/BankTest.java#L75)
 
-### Query Card Iframe Display Parameters (UQ Card)
-
-Call this API before initializing the iframe to obtain `card_id` + `embedded_host`. This API does not call the upstream and returns plaintext — no decryption needed.
-
-- Request:
-
-```text
-url: /api/v1/bank/getCardId
-method: GET
-```
-
-|  Parameter  | Type  | Whether Required |                        Description                         |
-| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
-| card_no  |  String  |    Required     | card no     |
-
-- Response:
-
-```json
-{
-    "code": 0,
-    "msg": "SUCCESS",
-    "result": {
-        "card_id": "card_xxx",
-        "embedded_host": "https://embedded-sandbox.tech.com"
-    }
-}
-```
-
-Note: only available for UQ cards.
 
 ### UQ Card Iframe Frontend Integration
 
-> Note: In the flow below, both open API calls (`/api/v1/bank/getCardId` and `/api/v1/bank/virtualcard`) must be made by **your backend** (the virtualcard response must be decrypted), which passes `card_id` / `embedded_host` / `token` down to the frontend. The page and the iframe never touch the encrypted open API payloads.
+> Note: In the flow below, both open API calls (`/api/v1/bank/cardid` and `/api/v1/bank/virtualcard`) must be made by **your backend** (the virtualcard response must be decrypted), which passes `card_id` / `embedded_host` / `token` down to the frontend. The page and the iframe never touch the encrypted open API payloads.
 
 Overall flow:
 
 ```
 User clicks "View card info"
-  -> 1. Your backend calls GET /api/v1/bank/getCardId and gets card_id + embedded_host (plaintext)
+  -> 1. Your backend calls GET /api/v1/bank/cardid and gets card_id + embedded_host (plaintext)
   -> 2. The frontend loads the iframe (without a token):
        {embedded_host}/iframe/card/?cardId={card_id}&parent_origin={your page origin}&lang=en&layout=card
   -> 3. The iframe generates a key pair and notifies the frontend via postMessage: { type: "uq:jkt", jkt: "<43 chars>" }
@@ -2085,9 +2088,9 @@ Full integration example (vanilla JS; `/server/...` are your own backend endpoin
   var CARD_NO = '...';  // current card
   var frame = document.getElementById('secure-card');
 
-  // 1. Your backend calls the open API GET /api/v1/bank/getCardId,
+  // 1. Your backend calls the open API GET /api/v1/bank/cardid,
   //    which returns card_id + embedded_host in plaintext
-  fetch('/server/card/getCardId?card_no=' + encodeURIComponent(CARD_NO))
+  fetch('/server/card/cardid?card_no=' + encodeURIComponent(CARD_NO))
     .then(r => r.json()).then(function (info) {
       if (!info || !info.card_id || !info.embedded_host) return; // other display modes (plaintext) omitted
       startSecureIframe(info.card_id, info.embedded_host);
