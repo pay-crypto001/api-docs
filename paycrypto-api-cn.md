@@ -572,7 +572,7 @@ method：POST
 |   country | String |必填 |用户所在国家，字符长度最大50|
 |   nationality | String |必填 |国籍，字符长度最大255|
 | doc_no | String |必填 |证件号码，字符长度最大128|
-| doc_type | String |必填 |证件类型(目前只支持passport): passport: 护照，idcard：身份证，字符长度最大8|
+| doc_type | String |必填 |证件类型: passport: 护照，idcard：身份证，字符长度最大8|
 | front_doc | String |必填 |正面照。base64编码, 照片文件大小应小于2M|
 | back_doc | String |选填 |反面照，doc_type是idcard时必须填写。base64编码，照片文件大小应小于2M|
 | mix_doc | String |必填 |手持证件照。base64编码，照片文件大小应小于2M|
