@@ -13,7 +13,8 @@
      * [Buy crypto](#buy-crypto)
      * [Exchange history](#exchange-history)
      * [Exchange order (Deprecated)](#exchange-order-deprecated)
-     * [Apply for virtual account](#apply-for-virtual-account)
+     * [Apply for virtual account - Basic information](#apply-for-virtual-account---basic-information)
+     * [Apply for virtual account - Financial declaration](#apply-for-virtual-account---financial-declaration)
      * [Query virtual account list](#query-virtual-account-list)
 * [Webhook](#Webhook)
      * [Test push events](#Test-push-events)
@@ -656,104 +657,75 @@ method：POST
 
 
 
-### Apply for virtual account
+### Apply for virtual account - Basic information
 
-Apply for a virtual account. This API only creates a **local application record** with review status `0-PENDING_REVIEW`; the platform ops team then reviews the application, and the virtual account is created at the upstream bank after approval. Use `GET /api/v1/mm/va/list` to poll the review result and the assigned account number.
+Step 1 of the split virtual account application flow (per *SGB API Client's Required Info, 2026-10-13*). The application is split into two endpoints:
+
+| Step | Endpoint | Content |
+| :--: | --- | --- |
+| 1 | `POST /api/v1/mm/va/apply/basic` | BASIC INFORMATION (individual or corporate) + identity/business documents |
+| 2 | `POST /api/v1/mm/va/apply/financial` | FINANCIAL DECLARATION (source of funds/wealth, tax declarations) + proof documents |
+
+- `client_type` distinguishes the applicant type: `retail` = individual, `corporate` = enterprise. The two steps must use the same `client_type` for the same currency.
+- **No required order**: the two steps can be called in any order. Both upsert the same application record of (customer, `currency`) — if the financial declaration is submitted first, a draft application is created and completed later by the basic information step.
+- **Re-call = update**: calling a step again overwrites that step's data of the existing application. Only applications in status `0`-PENDING_REVIEW, `2`-REJECTED or `3`-CREATE_FAILED can be re-submitted (a successful re-submission returns the status to `0`-PENDING_REVIEW); an approved (`1`-APPROVED) application is locked and any re-submission returns an error.
+- This API only creates/updates a **local application record**; the platform ops team reviews the application after both steps are submitted, and the virtual account is created at the upstream bank after approval. Use `GET /api/v1/mm/va/list` to poll the review result and the assigned account number.
 
 ```text
-url：/api/v1/mm/va/apply
+url：/api/v1/mm/va/apply/basic
 method：POST
 ```
 
-- Request (common fields):
+#### Basic information (Client - Individual)
+
+Request fields for `client_type=retail`:
 
 |  Parameter  | Type  | Whether Required |                        Description                         |
 | :---------: | :---: | :--------------: | :-------------------------------------------------------- |
 | currency  |  String  |    Required     | Virtual account currency, e.g. `USD`     |
-| mail  |  String  |    Optional     | Contact email (corporate: please provide a corporate email). Defaults to the registered email of the authenticated customer    |
-| client_type  |  String  |    Required     | Account holder type: `retail` / `corporate`     |
-| full_name  |  String  |    Optional     | Account holder full name (individual name / registered company name). Auto-composed from `first_name` + `middle_name` + `last_name` when blank    |
-| nationality  |  String  |    Required when `client_type=retail`     | Nationality, 3-letter country code    |
-| country  |  String  |    Required     | 3-letter country code. `retail`: country of residence; `corporate`: country of incorporation    |
-| city  |  String  |    Required     | City    |
-| address  |  String  |    Optional     | Full address. Auto-composed from `address_line1` + `address_line2` + `state_province` + `postal_code` when blank    |
-| date  |  String  |    Required     | Format `ddMMyyyy`. Date of birth for `retail`, date of incorporation for `corporate`    |
-| id_type  |  String  |    Required when `client_type=retail`     | `P`-Passport, `N`-National ID    |
-| id_number  |  String  |    Required     | ID number for `retail` / business registration number for `corporate`    |
-| corporate_type  |  String  |    Optional     | `FI` / `NON_FI`, only for `corporate`. Defaults to `NON_FI` when blank    |
-
-- Request (extended fields, SGB Client's Required Info 2026-10-13):
-
-|  Parameter  | Type  | Whether Required |                        Description                         |
-| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
-| first_name  |  String  |    Required     | First name. `retail`: of the individual; `corporate`: of the contact person    |
+| client_type  |  String  |    Required     | `retail` = individual     |
+| first_name  |  String  |    Required     | First name of the individual    |
 | middle_name  |  String  |    Optional     | Middle name    |
-| last_name  |  String  |    Required     | Last name. `retail`: of the individual; `corporate`: of the contact person    |
+| last_name  |  String  |    Required     | Last name of the individual    |
+| date  |  String  |    Required     | Date of birth, format `ddMMyyyy`    |
+| nationality  |  String  |    Required     | Nationality, 3-letter country code    |
 | contact_number  |  String  |    Required     | Contact number: country code + phone number, e.g. `+6591234567`    |
-| occupation  |  String  |    Required when `client_type=retail`     | Occupation    |
-| address_line1  |  String  |    Required     | Residential/registered address line 1, e.g. `123 Main Street`    |
+| mail  |  String  |    Optional     | Contact email. Defaults to the registered email of the authenticated customer    |
+| address_line1  |  String  |    Required     | Residential address line 1, e.g. `123 Main Street`    |
 | address_line2  |  String  |    Optional     | Address line 2, e.g. unit number    |
+| city  |  String  |    Required     | City    |
+| country  |  String  |    Required     | Country of residence, 3-letter country code    |
 | state_province  |  String  |    Optional     | State / Province    |
 | postal_code  |  String  |    Optional     | Postal code (if applicable)    |
-| business_nature  |  String  |    Required when `client_type=corporate`     | Business nature    |
-| principal_same_as_registered  |  Boolean  |    Optional     | `corporate` only. Principal place of business is same as registered address. Default `false`    |
-| principal_address_line1  |  String  |    Required when `principal_same_as_registered=false`     | Principal place of business address line 1    |
-| principal_address_line2  |  String  |    Optional     | Principal place of business address line 2    |
-| principal_city  |  String  |    Required when `principal_same_as_registered=false`     | Principal place of business city    |
-| principal_country  |  String  |    Required when `principal_same_as_registered=false`     | Principal place of business country, 3-letter country code    |
-| principal_state_province  |  String  |    Optional     | Principal place of business state/province    |
-| principal_postal_code  |  String  |    Optional     | Principal place of business postal code    |
-| source_of_funds  |  Array[String]  |    Required     | Source of funds, multi-select. `retail`: `CRYPTOCURRENCY_STAKING` / `CRYPTOCURRENCY_MINING` / `EMPLOYMENT_INCOME` / `INHERITANCE` / `INVESTMENTS_OR_TRADING` / `SALE_OF_ASSETS` / `OTHERS`; `corporate`: `BUSINESS_ACTIVITY` / `BUSINESS_LOAN` / `CRYPTOCURRENCY_MINING` / `CRYPTOCURRENCY_STAKING` / `INVESTMENTS_OR_TRADING` / `SALE_OF_ASSETS` / `SHAREHOLDER_OR_INVESTOR_FUNDS` / `OTHERS`. A document proof (`SOURCE_OF_FUNDS_PROOF`) should be provided for each option declared    |
-| source_of_funds_others  |  String  |    Required when `source_of_funds` contains `OTHERS`     | Source of funds - others description    |
-| source_of_wealth_same_as_funds  |  Boolean  |    Optional     | Source of wealth is same as source of funds. Default `false`    |
-| source_of_wealth  |  Array[String]  |    Required when `source_of_wealth_same_as_funds` is not `true`     | Source of wealth, multi-select (same options as `source_of_funds`). A document proof (`SOURCE_OF_WEALTH_PROOF`) should be provided for each option declared    |
-| source_of_wealth_others  |  String  |    Required when `source_of_wealth` contains `OTHERS`     | Source of wealth - others description    |
-| tax_declarations  |  Array[Object]  |    Required     | Tax declarations (jurisdictions of tax residence), at least one. Each item: `{"country_of_jurisdiction": "SGP"}` (3-letter country code)    |
-| documents  |  Array[Object]  |    Required     | KYC documents, see the table below    |
+| occupation  |  String  |    Required     | Occupation    |
+| id_type  |  String  |    Required     | `P`-Passport, `N`-National ID    |
+| id_number  |  String  |    Required     | ID number    |
+| full_name  |  String  |    Optional     | Account holder full name. Auto-composed from `first_name` + `middle_name` + `last_name` when blank    |
+| address  |  String  |    Optional     | Full address. Auto-composed from `address_line1` + `address_line2` + `state_province` + `postal_code` when blank    |
+| documents  |  Array[Object]  |    Required     | Identity/address documents, see [documents item](#va-documents-item). Individual required: `PROOF_OF_IDENTITY` + `PROOF_OF_RESIDENTIAL_ADDRESS`    |
 
-- `documents` item:
-
-|  Parameter  | Type  | Whether Required |                        Description                         |
-| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
-| doc_type  |  String  |    Required     | `PROOF_OF_IDENTITY` / `PROOF_OF_RESIDENTIAL_ADDRESS` / `CERTIFICATE_OF_INCORPORATION` / `ANNUAL_RETURNS_FILING` / `CERTIFICATE_OF_INCUMBENCY` / `SOURCE_OF_FUNDS_PROOF` / `SOURCE_OF_WEALTH_PROOF` / `OTHER`    |
-| file_name  |  String  |    Optional     | Original file name, e.g. `passport.jpg`    |
-| file_base64  |  String  |    Required when `file_url` is blank     | File content as a base64 data string, e.g. `data:image/jpeg;base64,/9j/4AAQ...`. Formats: `jpg` / `jpeg` / `png` / `bmp`, max `4MB` per file. The server uploads it to S3 and stores only the generated file URL    |
-| file_url  |  String  |    Required when `file_base64` is blank     | Already-uploaded file URL (used as-is)    |
-
-Document requirements per client type:
-
-|  client_type  |  Required documents  |
-| :-----------: | :------------------- |
-| `retail`  | `PROOF_OF_IDENTITY` + `PROOF_OF_RESIDENTIAL_ADDRESS`    |
-| `corporate`  | `CERTIFICATE_OF_INCORPORATION` + (`ANNUAL_RETURNS_FILING` or `CERTIFICATE_OF_INCUMBENCY`)    |
-
-- Request example (retail):
+- Request example (individual):
 
 ```json
 {
     "currency": "USD",
-    "mail": "customer@example.com",
     "client_type": "retail",
-    "nationality": "SGP",
-    "country": "SGP",
-    "city": "Singapore",
-    "date": "01011990",
-    "id_type": "P",
-    "id_number": "E1234567A",
+    "mail": "customer@example.com",
     "first_name": "John",
     "middle_name": "Michael",
     "last_name": "Doe",
+    "date": "01011990",
+    "nationality": "SGP",
     "contact_number": "+6591234567",
     "occupation": "Software Engineer",
     "address_line1": "1 Raffles Place",
     "address_line2": "#20-61",
+    "city": "Singapore",
+    "country": "SGP",
     "state_province": "Central Region",
     "postal_code": "048616",
-    "source_of_funds": ["EMPLOYMENT_INCOME", "INVESTMENTS_OR_TRADING"],
-    "source_of_wealth_same_as_funds": true,
-    "tax_declarations": [
-        {"country_of_jurisdiction": "SGP"}
-    ],
+    "id_type": "P",
+    "id_number": "E1234567A",
     "documents": [
         {
             "doc_type": "PROOF_OF_IDENTITY",
@@ -764,43 +736,67 @@ Document requirements per client type:
             "doc_type": "PROOF_OF_RESIDENTIAL_ADDRESS",
             "file_name": "utility_bill.png",
             "file_base64": "data:image/png;base64,iVBORw0KGgo..."
-        },
-        {
-            "doc_type": "SOURCE_OF_FUNDS_PROOF",
-            "file_name": "payslip.jpg",
-            "file_base64": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
         }
     ]
 }
 ```
+
+#### Basic information (Client - Corporate)
+
+Request fields for `client_type=corporate`:
+
+|  Parameter  | Type  | Whether Required |                        Description                         |
+| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
+| currency  |  String  |    Required     | Virtual account currency, e.g. `USD`     |
+| client_type  |  String  |    Required     | `corporate` = enterprise     |
+| full_name  |  String  |    Required     | Registered company name    |
+| id_number  |  String  |    Required     | Business registration number    |
+| business_nature  |  String  |    Required     | Business nature    |
+| country  |  String  |    Required     | Country of incorporation, 3-letter country code    |
+| date  |  String  |    Required     | Date of incorporation, format `ddMMyyyy`    |
+| corporate_type  |  String  |    Optional     | `FI` / `NON_FI`. Defaults to `NON_FI` when blank    |
+| first_name  |  String  |    Required     | First name of the contact person    |
+| middle_name  |  String  |    Optional     | Middle name of the contact person    |
+| last_name  |  String  |    Required     | Last name of the contact person    |
+| contact_number  |  String  |    Required     | Contact number: country code + phone number, e.g. `+6562345678`    |
+| mail  |  String  |    Optional     | Contact email (**please provide a corporate email**). Defaults to the registered email of the authenticated customer    |
+| address_line1  |  String  |    Required     | Registered address line 1, e.g. `123 Main Street` (provide unit number if any)    |
+| address_line2  |  String  |    Optional     | Registered address line 2, e.g. unit number    |
+| city  |  String  |    Required     | Registered address city    |
+| state_province  |  String  |    Optional     | Registered address state / province    |
+| postal_code  |  String  |    Optional     | Registered address postal code    |
+| address  |  String  |    Optional     | Full registered address. Auto-composed from `address_line1` + `address_line2` + `state_province` + `postal_code` when blank    |
+| principal_same_as_registered  |  Boolean  |    Optional     | Principal place of business is same as registered address. Default `false`    |
+| principal_address_line1  |  String  |    Required when `principal_same_as_registered=false`     | Principal place of business address line 1    |
+| principal_address_line2  |  String  |    Optional     | Principal place of business address line 2    |
+| principal_city  |  String  |    Required when `principal_same_as_registered=false`     | Principal place of business city    |
+| principal_country  |  String  |    Required when `principal_same_as_registered=false`     | Principal place of business country, 3-letter country code    |
+| principal_state_province  |  String  |    Optional     | Principal place of business state/province    |
+| principal_postal_code  |  String  |    Optional     | Principal place of business postal code    |
+| documents  |  Array[Object]  |    Required     | Business documents, see [documents item](#va-documents-item). Corporate required: `CERTIFICATE_OF_INCORPORATION` + (`ANNUAL_RETURNS_FILING` or `CERTIFICATE_OF_INCUMBENCY`)    |
 
 - Request example (corporate):
 
 ```json
 {
     "currency": "USD",
-    "mail": "finance@acme.com",
     "client_type": "corporate",
+    "mail": "finance@acme.com",
     "full_name": "ACME Trading Pte. Ltd.",
-    "country": "SGP",
-    "city": "Singapore",
-    "date": "15032015",
     "id_number": "201506789K",
+    "business_nature": "International trade",
+    "country": "SGP",
+    "date": "15032015",
     "corporate_type": "NON_FI",
     "first_name": "Jane",
     "last_name": "Smith",
     "contact_number": "+6562345678",
-    "business_nature": "International trade",
     "address_line1": "10 Anson Road",
     "address_line2": "#15-02",
+    "city": "Singapore",
     "state_province": "Central Region",
     "postal_code": "079903",
     "principal_same_as_registered": true,
-    "source_of_funds": ["BUSINESS_ACTIVITY"],
-    "source_of_wealth_same_as_funds": true,
-    "tax_declarations": [
-        {"country_of_jurisdiction": "SGP"}
-    ],
     "documents": [
         {
             "doc_type": "CERTIFICATE_OF_INCORPORATION",
@@ -816,7 +812,114 @@ Document requirements per client type:
 }
 ```
 
-- Response:
+#### `documents` item
+
+|  Parameter  | Type  | Whether Required |                        Description                         |
+| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
+| doc_type  |  String  |    Required     | `PROOF_OF_IDENTITY` / `PROOF_OF_RESIDENTIAL_ADDRESS` / `CERTIFICATE_OF_INCORPORATION` / `ANNUAL_RETURNS_FILING` / `CERTIFICATE_OF_INCUMBENCY` / `SOURCE_OF_FUNDS_PROOF` / `SOURCE_OF_WEALTH_PROOF` / `OTHER`    |
+| file_name  |  String  |    Optional     | Original file name, e.g. `passport.jpg`    |
+| file_base64  |  String  |    Required when `file_url` is blank     | File content as a base64 data string, e.g. `data:image/jpeg;base64,/9j/4AAQ...`. Formats: `jpg` / `jpeg` / `png` / `bmp`, max `4MB` per file. The server uploads it to S3 and stores only the generated file URL    |
+| file_url  |  String  |    Required when `file_base64` is blank     | Already-uploaded file URL (used as-is)    |
+
+Document requirements per client type (basic information step; source of funds/wealth proofs belong to the financial declaration step):
+
+|  client_type  |  Required documents  |
+| :-----------: | :------------------- |
+| `retail`  | `PROOF_OF_IDENTITY` + `PROOF_OF_RESIDENTIAL_ADDRESS`    |
+| `corporate`  | `CERTIFICATE_OF_INCORPORATION` + (`ANNUAL_RETURNS_FILING` or `CERTIFICATE_OF_INCUMBENCY`)    |
+
+- Response: see [Apply response](#va-apply-response) below.
+
+
+### Apply for virtual account - Financial declaration
+
+Step 2 of the split virtual account application flow: FINANCIAL DECLARATION — source of funds & wealth and tax declarations. See [Apply for virtual account - Basic information](#apply-for-virtual-account---basic-information) for the overall flow, ordering and re-submission rules.
+
+```text
+url：/api/v1/mm/va/apply/financial
+method：POST
+```
+
+#### Financial declaration (Client - Individual)
+
+Request fields for `client_type=retail`:
+
+|  Parameter  | Type  | Whether Required |                        Description                         |
+| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
+| currency  |  String  |    Required     | Virtual account currency, e.g. `USD`. Must match the basic information application     |
+| client_type  |  String  |    Required     | `retail` = individual. Must match the basic information application     |
+| source_of_funds  |  Array[String]  |    Required     | Source of funds, multi-select: `CRYPTOCURRENCY_STAKING` / `CRYPTOCURRENCY_MINING` / `EMPLOYMENT_INCOME` / `INHERITANCE` / `INVESTMENTS_OR_TRADING` / `SALE_OF_ASSETS` / `OTHERS`. A document proof (`SOURCE_OF_FUNDS_PROOF`) should be provided for each option declared    |
+| source_of_funds_others  |  String  |    Required when `source_of_funds` contains `OTHERS`     | Source of funds - others description    |
+| source_of_wealth_same_as_funds  |  Boolean  |    Optional     | Source of wealth is same as source of funds. Default `false`    |
+| source_of_wealth  |  Array[String]  |    Required when `source_of_wealth_same_as_funds` is not `true`     | Source of wealth, multi-select (same options as `source_of_funds`). A document proof (`SOURCE_OF_WEALTH_PROOF`) should be provided for each option declared    |
+| source_of_wealth_others  |  String  |    Required when `source_of_wealth` contains `OTHERS`     | Source of wealth - others description    |
+| tax_declarations  |  Array[Object]  |    Required     | Tax declarations (jurisdictions of tax residence), at least one. Each item: `{"country_of_jurisdiction": "SGP"}` (3-letter country code)    |
+| documents  |  Array[Object]  |    Optional     | Supporting proofs: `SOURCE_OF_FUNDS_PROOF` / `SOURCE_OF_WEALTH_PROOF` / `OTHER`, see [documents item](#va-documents-item)    |
+
+- Request example (individual):
+
+```json
+{
+    "currency": "USD",
+    "client_type": "retail",
+    "source_of_funds": ["EMPLOYMENT_INCOME", "INVESTMENTS_OR_TRADING"],
+    "source_of_wealth_same_as_funds": true,
+    "tax_declarations": [
+        {"country_of_jurisdiction": "SGP"}
+    ],
+    "documents": [
+        {
+            "doc_type": "SOURCE_OF_FUNDS_PROOF",
+            "file_name": "payslip.jpg",
+            "file_base64": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+        }
+    ]
+}
+```
+
+#### Financial declaration (Client - Corporate)
+
+Request fields for `client_type=corporate`:
+
+|  Parameter  | Type  | Whether Required |                        Description                         |
+| :---------: | :---: | :--------------: | :-------------------------------------------------------- |
+| currency  |  String  |    Required     | Virtual account currency, e.g. `USD`. Must match the basic information application     |
+| client_type  |  String  |    Required     | `corporate` = enterprise. Must match the basic information application     |
+| source_of_funds  |  Array[String]  |    Required     | Source of funds, multi-select: `BUSINESS_ACTIVITY` / `BUSINESS_LOAN` / `CRYPTOCURRENCY_MINING` / `CRYPTOCURRENCY_STAKING` / `INVESTMENTS_OR_TRADING` / `SALE_OF_ASSETS` / `SHAREHOLDER_OR_INVESTOR_FUNDS` / `OTHERS`. A document proof (`SOURCE_OF_FUNDS_PROOF`) should be provided for each option declared    |
+| source_of_funds_others  |  String  |    Required when `source_of_funds` contains `OTHERS`     | Source of funds - others description    |
+| source_of_wealth_same_as_funds  |  Boolean  |    Optional     | Source of wealth is same as source of funds. Default `false`    |
+| source_of_wealth  |  Array[String]  |    Required when `source_of_wealth_same_as_funds` is not `true`     | Source of wealth, multi-select (same options as `source_of_funds`). A document proof (`SOURCE_OF_WEALTH_PROOF`) should be provided for each option declared    |
+| source_of_wealth_others  |  String  |    Required when `source_of_wealth` contains `OTHERS`     | Source of wealth - others description    |
+| tax_declarations  |  Array[Object]  |    Required     | Tax declarations (jurisdictions of tax residence), at least one. Each item: `{"country_of_jurisdiction": "SGP"}` (3-letter country code)    |
+| documents  |  Array[Object]  |    Optional     | Supporting proofs: `SOURCE_OF_FUNDS_PROOF` / `SOURCE_OF_WEALTH_PROOF` / `OTHER`, see [documents item](#va-documents-item)    |
+
+- Request example (corporate):
+
+```json
+{
+    "currency": "USD",
+    "client_type": "corporate",
+    "source_of_funds": ["BUSINESS_ACTIVITY"],
+    "source_of_wealth_same_as_funds": true,
+    "tax_declarations": [
+        {"country_of_jurisdiction": "SGP"}
+    ],
+    "documents": [
+        {
+            "doc_type": "SOURCE_OF_FUNDS_PROOF",
+            "file_name": "business_proof.jpg",
+            "file_base64": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+        }
+    ]
+}
+```
+
+- Response: see [Apply response](#va-apply-response) below.
+
+
+#### Apply response
+
+Both apply endpoints (`/apply/basic` and `/apply/financial`) return the full application record after the upsert:
 
 ```json
 {
@@ -882,15 +985,15 @@ Document requirements per client type:
 |   virtual_acct_status   | String |        Virtual account status reported by the bank (available after approval)              |
 |   created_and_assigned   | int |        Review status: `0`-PENDING_REVIEW, `1`-APPROVED (account created), `2`-REJECTED, `3`-CREATE_FAILED (can be reviewed again)              |
 |   reason   | String |        Reject / failure reason              |
-|   kyc_extra   | Object |        Extended KYC info submitted with the application (stored locally, not sent to the bank). `documents[].file_url` is the uploaded S3 file URL; `file_base64` is always `null` here. `null` for applications created before 2026-10-13              |
+|   kyc_extra   | Object |        Extended KYC info submitted with the application (stored locally, not sent to the bank). `documents[].file_url` is the uploaded S3 file URL; `file_base64` is always `null` here. Fields of a step not submitted yet are `null`              |
 |   create_time / update_time   | long |        `UNIX` timestamp, unit: `milliseconds`              |
 
-Note: only one pending/approved application is allowed per customer per currency. Applying again for the same currency while one is `0`-PENDING_REVIEW or `1`-APPROVED returns an error; re-apply is allowed after `2`-REJECTED or `3`-CREATE_FAILED.
+Note: only one application is kept per customer per currency. Re-submitting either step while the application is `0`-PENDING_REVIEW, `2`-REJECTED or `3`-CREATE_FAILED updates that step's data and returns the status to `0`-PENDING_REVIEW; once the application is `1`-APPROVED it is locked and any re-submission returns an error.
 
 
 ### Query virtual account list
 
-Query all virtual account applications/accounts of the authenticated customer, including the review status, the extended KYC info (`kyc_extra`, with document file URLs) and the assigned virtual account number after approval. Typically used to poll the review result after `apply`.
+Query all virtual account applications/accounts of the authenticated customer, including the review status, the extended KYC info (`kyc_extra`, with document file URLs) and the assigned virtual account number after approval. Typically used to poll the review result after submitting the basic information / financial declaration steps.
 
 ```text
 url：/api/v1/mm/va/list
