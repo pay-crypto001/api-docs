@@ -1037,10 +1037,17 @@ method：GET
                 "first_name": "John",
                 "middle_name": "Michael",
                 "last_name": "Doe",
+                "full_name": null,
+                "date": "01011990",
+                "nationality": "SGP",
+                "id_type": "P",
+                "id_number": "E1234567A",
                 "contact_number": "+6591234567",
                 "occupation": "Software Engineer",
                 "address_line1": "1 Raffles Place",
                 "address_line2": "#20-61",
+                "city": "Singapore",
+                "country": "SGP",
                 "state_province": "Central Region",
                 "postal_code": "048616",
                 "business_nature": null,
@@ -1097,6 +1104,7 @@ method：GET
     ]
 }
 ```
+
 
 | Parameter |  Type  |          Description          |
 | :--------: | :----: | :------------------------------ |
