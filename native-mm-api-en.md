@@ -663,18 +663,16 @@ method：POST
 
 ### Apply for virtual account - Basic information
 
-Step 1 of the split virtual account application flow. The application is split into two steps, and each step is provided per applicant type:
+Step 1 of the two-step virtual account application flow. Basic information is provided per applicant type:
 
-| Step | Applicant type | Endpoint | Content |
-| :--: | --- | --- | --- |
-| 1 | Individual | `POST /api/v1/mm/va/apply/basic/individual` | BASIC INFORMATION of the individual + identity/address documents |
-| 1 | Corporate | `POST /api/v1/mm/va/apply/basic/corporate` | BASIC INFORMATION of the company + business documents |
-| 2 | Individual | `POST /api/v1/mm/va/apply/financial/individual` | FINANCIAL DECLARATION (source of funds/wealth, tax declarations) + proof documents |
-| 2 | Corporate | `POST /api/v1/mm/va/apply/financial/corporate` | FINANCIAL DECLARATION (source of funds/wealth, tax declarations) + proof documents |
+| Applicant type | Endpoint | Content |
+| --- | --- | --- |
+| Individual | `POST /api/v1/mm/va/apply/basic/individual` | BASIC INFORMATION of the individual + identity/address documents |
+| Corporate | `POST /api/v1/mm/va/apply/basic/corporate` | BASIC INFORMATION of the company + business documents |
 
 - The applicant type is determined by the endpoint you call. The basic information and financial declaration steps of the same currency must use endpoints of the same applicant type.
-- **No required order**: the two steps can be called in any order. Both upsert the same application record of (customer, `currency`) — if the financial declaration is submitted first, a draft application is created and completed later by the basic information step.
-- **Re-call = update**: calling a step again overwrites that step's data of the existing application. Only applications in status `0`-PENDING_REVIEW, `2`-REJECTED or `3`-CREATE_FAILED can be re-submitted (a successful re-submission returns the status to `0`-PENDING_REVIEW); an approved (`1`-APPROVED) application is locked and any re-submission returns an error.
+- **Step order**: the basic information must be submitted **before** the financial declaration of the same currency (see [Apply for virtual account - Financial declaration](#apply-for-virtual-account---financial-declaration)); calling the financial declaration first returns an error. The two steps upsert the same application record of (customer, `currency`).
+- **update**: calling a step again overwrites that step's data of the existing application. Only applications in status `0`-PENDING_REVIEW, `2`-REJECTED or `3`-CREATE_FAILED can be re-submitted (a successful re-submission returns the status to `0`-PENDING_REVIEW); an approved (`1`-APPROVED) application is locked and any re-submission returns an error.
 - This API only creates/updates a **local application record**; the platform ops team reviews the application after both steps are submitted, and the virtual account is created at the upstream bank after approval. Use `GET /api/v1/mm/va/list` to poll the review result and the assigned account number.
 
 #### Basic information (Individual)
@@ -704,6 +702,7 @@ method：POST
 | state_province  |  String  |    Optional     | State / Province    |
 | postal_code  |  String  |    Optional     | Postal code (if applicable)    |
 | documents  |  Array[Object]  |    Required     | Identity/address documents, see [documents item](#documents-item). Individual required: `PROOF_OF_IDENTITY` + `PROOF_OF_RESIDENTIAL_ADDRESS`    |
+
 
 - Request example (individual):
 
@@ -819,6 +818,7 @@ method：POST
 | file_base64  |  String  |    Condition when `file_url` is blank     | File content as a base64 data string, e.g. `data:image/jpeg;base64,/9j/4AAQ...`. Formats: `jpg` / `jpeg` / `png` / `bmp`, max `4MB` per file. The server uploads it to S3 and stores only the generated file URL    |
 | file_url  |  String  |    Condition when `file_base64` is blank     | Already-uploaded file URL (used as-is)    |
 
+
 Document requirements per applicant type (basic information step; source of funds/wealth proofs belong to the financial declaration step):
 
 |  Applicant type  |  Required documents  |
@@ -831,7 +831,14 @@ Document requirements per applicant type (basic information step; source of fund
 
 ### Apply for virtual account - Financial declaration
 
-Step 2 of the split virtual account application flow: FINANCIAL DECLARATION — source of funds & wealth and tax declarations. See [Apply for virtual account - Basic information](#apply-for-virtual-account---basic-information) for the overall flow, ordering and re-submission rules.
+Step 2 of the two-step virtual account application flow: FINANCIAL DECLARATION — source of funds & wealth and tax declarations. It is provided per applicant type:
+
+| Applicant type | Endpoint | Content |
+| --- | --- | --- |
+| Individual | `POST /api/v1/mm/va/apply/financial/individual` | FINANCIAL DECLARATION (source of funds/wealth, tax declarations) + proof documents |
+| Corporate | `POST /api/v1/mm/va/apply/financial/corporate` | FINANCIAL DECLARATION (source of funds/wealth, tax declarations) + proof documents |
+
+- **Step order**: the basic information of the same currency and the same applicant type **must be submitted first**, otherwise the request fails. See [Apply for virtual account - Basic information](#apply-for-virtual-account---basic-information) for the overall flow and re-submission rules.
 
 #### Financial declaration (Individual)
 
@@ -918,13 +925,14 @@ All four apply endpoints (`/apply/basic/individual`, `/apply/basic/corporate`, `
     "result": {
         "id": 12,
         "currency": "USD",
+        "client_type": "retail",
         "mail": "customer@example.com",
         "virtual_acct_no": null,
         "virtual_iban": null,
         "virtual_acct_status": null,
         "created_and_assigned": 0,
         "reason": null,
-        "kyc_extra": {
+        "kyc_basic": {
             "first_name": "John",
             "middle_name": "Michael",
             "last_name": "Doe",
@@ -941,6 +949,16 @@ All four apply endpoints (`/apply/basic/individual`, `/apply/basic/corporate`, `
             "principal_country": null,
             "principal_state_province": null,
             "principal_postal_code": null,
+            "documents": [
+                {
+                    "doc_type": "PROOF_OF_IDENTITY",
+                    "file_name": "payone_sgbva_123_proof_of_identity_a1b2c3d4e5f6.jpeg",
+                    "file_base64": null,
+                    "file_url": "https://xxx.s3.xxx.amazonaws.com/payone_sgbva_123_proof_of_identity_a1b2c3d4e5f6.jpeg"
+                }
+            ]
+        },
+        "kyc_financial": {
             "source_of_funds": ["EMPLOYMENT_INCOME", "INVESTMENTS_OR_TRADING"],
             "source_of_funds_others": null,
             "source_of_wealth": ["EMPLOYMENT_INCOME", "INVESTMENTS_OR_TRADING"],
@@ -950,10 +968,10 @@ All four apply endpoints (`/apply/basic/individual`, `/apply/basic/corporate`, `
             ],
             "documents": [
                 {
-                    "doc_type": "PROOF_OF_IDENTITY",
-                    "file_name": "va_123_proof_of_identity_a1b2c3d4e5f6.jpeg",
+                    "doc_type": "SOURCE_OF_FUNDS_PROOF",
+                    "file_name": "payone_sgbva_123_source_of_funds_proof_b2c3d4e5f6a1.jpeg",
                     "file_base64": null,
-                    "file_url": "https://xxx.s3.xxx.amazonaws.com/va_123_proof_of_identity_a1b2c3d4e5f6.jpeg"
+                    "file_url": "https://xxx.s3.xxx.amazonaws.com/payone_sgbva_123_source_of_funds_proof_b2c3d4e5f6a1.jpeg"
                 }
             ]
         },
@@ -967,21 +985,23 @@ All four apply endpoints (`/apply/basic/individual`, `/apply/basic/corporate`, `
 | :--------: | :----: | :------------------------------ |
 |   id   | long |        Local application record id              |
 |   currency   | String |        Virtual account currency              |
+|   client_type   | String |        Applicant type: `retail` (individual) / `corporate` (enterprise)              |
 |   mail   | String |        Contact email used for the application              |
 |   virtual_acct_no   | String |        Virtual account number, assigned after approval (`null` before that)              |
 |   virtual_iban   | String |        Virtual IBAN, assigned after approval (`null` before that)              |
 |   virtual_acct_status   | String |        Virtual account status reported by the bank (available after approval)              |
 |   created_and_assigned   | int |        Review status: `0`-PENDING_REVIEW, `1`-APPROVED (account created), `2`-REJECTED, `3`-CREATE_FAILED (can be reviewed again)              |
 |   reason   | String |        Reject / failure reason              |
-|   kyc_extra   | Object |        Extended KYC info submitted with the application (stored locally, not sent to the bank). `documents[].file_url` is the uploaded S3 file URL and `documents[].file_name` is the server-generated file name; `file_base64` is always `null` here. Fields of a step not submitted yet are `null`              |
+|   kyc_basic   | Object |        KYC info of the basic information step (stored locally, not sent to the bank). `documents[].file_url` is the uploaded S3 file URL and `documents[].file_name` is the server-generated file name; `file_base64` is always `null` here              |
+|   kyc_financial   | Object |        KYC info of the financial declaration step (stored locally, not sent to the bank); document fields follow the same rules as `kyc_basic`. `null` when the financial declaration step has not been submitted yet              |
 |   create_time / update_time   | long |        `UNIX` timestamp, unit: `milliseconds`              |
 
-Note: only one application is kept per customer per currency. Re-submitting either step while the application is `0`-PENDING_REVIEW, `2`-REJECTED or `3`-CREATE_FAILED updates that step's data and returns the status to `0`-PENDING_REVIEW; once the application is `1`-APPROVED it is locked and any re-submission returns an error.
+Note: only one application is kept per customer per currency. The financial declaration can only be submitted after the basic information of the same currency. Re-submitting either step while the application is `0`-PENDING_REVIEW, `2`-REJECTED or `3`-CREATE_FAILED updates that step's data and returns the status to `0`-PENDING_REVIEW; once the application is `1`-APPROVED it is locked and any re-submission returns an error.
 
 
 ### Query virtual account list
 
-Query all virtual account applications/accounts of the authenticated customer, including the review status, the extended KYC info (`kyc_extra`, with document file URLs) and the assigned virtual account number after approval. Typically used to poll the review result after submitting the basic information / financial declaration steps.
+Query all virtual account applications/accounts of the authenticated customer, including the review status, the KYC info of each step (`kyc_basic` / `kyc_financial`, with document file URLs) and the assigned virtual account number after approval. Typically used to poll the review result after submitting the basic information / financial declaration steps.
 
 ```text
 url：/api/v1/mm/va/list
@@ -994,6 +1014,7 @@ method：GET
 | :---------: | :---: | :--------------: | :-------------------------------------------------------- |
 | mail  |  String  |    Optional     | Filter by the contact email used for the application (exact match)    |
 | currency  |  String  |    Optional     | Filter by virtual account currency, e.g. `USD` (case-insensitive)    |
+| client_type  |  String  |    Optional     | Filter by applicant type: `retail` (individual) / `corporate` (enterprise)    |
 
 - Response:
 
@@ -1005,20 +1026,28 @@ method：GET
         {
             "id": 12,
             "currency": "USD",
+            "client_type": "retail",
             "mail": "customer@example.com",
             "virtual_acct_no": "847201935762",
             "virtual_iban": "SG83BANK0000847201935762",
             "virtual_acct_status": "ACTIVE",
             "created_and_assigned": 1,
             "reason": null,
-            "kyc_extra": {
+            "kyc_basic": {
                 "first_name": "John",
                 "middle_name": "Michael",
                 "last_name": "Doe",
+                "full_name": null,
+                "date": "01011990",
+                "nationality": "SGP",
+                "id_type": "P",
+                "id_number": "E1234567A",
                 "contact_number": "+6591234567",
                 "occupation": "Software Engineer",
                 "address_line1": "1 Raffles Place",
                 "address_line2": "#20-61",
+                "city": "Singapore",
+                "country": "SGP",
                 "state_province": "Central Region",
                 "postal_code": "048616",
                 "business_nature": null,
@@ -1028,6 +1057,16 @@ method：GET
                 "principal_country": null,
                 "principal_state_province": null,
                 "principal_postal_code": null,
+                "documents": [
+                    {
+                        "doc_type": "PROOF_OF_IDENTITY",
+                        "file_name": "payone_sgbva_123_proof_of_identity_a1b2c3d4e5f6.jpeg",
+                        "file_base64": null,
+                        "file_url": "https://xxx.s3.xxx.amazonaws.com/payone_sgbva_123_proof_of_identity_a1b2c3d4e5f6.jpeg"
+                    }
+                ]
+            },
+            "kyc_financial": {
                 "source_of_funds": ["EMPLOYMENT_INCOME", "INVESTMENTS_OR_TRADING"],
                 "source_of_funds_others": null,
                 "source_of_wealth": ["EMPLOYMENT_INCOME", "INVESTMENTS_OR_TRADING"],
@@ -1037,10 +1076,10 @@ method：GET
                 ],
                 "documents": [
                     {
-                        "doc_type": "PROOF_OF_IDENTITY",
-                        "file_name": "va_123_proof_of_identity_a1b2c3d4e5f6.jpeg",
+                        "doc_type": "SOURCE_OF_FUNDS_PROOF",
+                        "file_name": "payone_sgbva_123_source_of_funds_proof_b2c3d4e5f6a1.jpeg",
                         "file_base64": null,
-                        "file_url": "https://xxx.s3.xxx.amazonaws.com/va_123_proof_of_identity_a1b2c3d4e5f6.jpeg"
+                        "file_url": "https://xxx.s3.xxx.amazonaws.com/payone_sgbva_123_source_of_funds_proof_b2c3d4e5f6a1.jpeg"
                     }
                 ]
             },
@@ -1050,13 +1089,15 @@ method：GET
         {
             "id": 10,
             "currency": "EUR",
+            "client_type": "corporate",
             "mail": "ops@example.com",
             "virtual_acct_no": null,
             "virtual_iban": null,
             "virtual_acct_status": null,
             "created_and_assigned": 2,
             "reason": "KYC address incomplete",
-            "kyc_extra": null,
+            "kyc_basic": null,
+            "kyc_financial": null,
             "create_time": 1768377800000,
             "update_time": 1768464200000
         }
@@ -1064,17 +1105,19 @@ method：GET
 }
 ```
 
+
 | Parameter |  Type  |          Description          |
 | :--------: | :----: | :------------------------------ |
 |   id   | long |        Local application record id              |
 |   currency   | String |        Virtual account currency              |
+|   client_type   | String |        Applicant type: `retail` (individual) / `corporate` (enterprise)              |
 |   mail   | String |        Contact email used for the application              |
 |   virtual_acct_no   | String |        Virtual account number, assigned after approval (`null` before that)              |
 |   virtual_iban   | String |        Virtual IBAN, assigned after approval (`null` before that)              |
 |   virtual_acct_status   | String |        Virtual account status reported by the bank (available after approval)              |
 |   created_and_assigned   | int |        Review status: `0`-PENDING_REVIEW, `1`-APPROVED (account created), `2`-REJECTED, `3`-CREATE_FAILED (can be reviewed again)              |
 |   reason   | String |        Reject / failure reason              |
-|   kyc_extra   | Object |        Extended KYC info submitted with the application (same structure as the apply response). `null` for applications created before 2026-10-13              |
+|   kyc_basic / kyc_financial   | Object |        KYC info of the basic information / financial declaration step (same structure as the apply response); each is `null` when its step has not been submitted yet              |
 |   create_time / update_time   | long |        `UNIX` timestamp, unit: `milliseconds`              |
 
 
