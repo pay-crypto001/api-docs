@@ -530,7 +530,10 @@ url：/api/v1/customers/accounts
 method：POST
 ```
 
-
+VISA Card (cards with card_type starting with 8200) — Card Issuing Country Restrictions List:
+🔴 Red — Not supported: AF, BD, BY, CD, CF, CN, CU, DO, GW, HT, ID, IN, IQ, IR, KP, LB, LK, LY, MA, ML, MM, NP, RU, SD, SO, SS, SY, TR, UA, US, VE, YE, ZW
+🟡 Yellow — Residence country cannot be yellow; nationality may be yellow: DZ, BT, CA EG, ET, HK, IL, JO, MV, MX, NZ, OM, PK, PR, SA, TN
+🟢 Green — All remaining countries are green and fully supported, with both passport and ID card accepted.
 
 |       Parameter        |  Type  | Whether Required |                                          Description                                          |
 | :--------------------: | :----: | :--------------: | :-------------------------------------------------------------------------------------------: |
