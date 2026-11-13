@@ -556,6 +556,11 @@ url：/api/v1/customers/accounts
 method：POST
 ```
 
+VISA卡（card_type 8200开头的卡） 开卡国家限制名单:
+🔴 Red 红色不支持：AF, BD, BY, CD, CF, CN, CU, DO, GW, HT, ID, IN, IQ, IR, KP, LB, LK, LY, MA, ML, MM, NP, RU, SD, SO, SS, SY, TR, UA, US, VE, YE, ZW 
+🟡 Yellow黄色，居住地不能是黄色，国际可以是黄色：DZ, BT, CA, EG, ET, HK, IL, JO, MV, MX, NZ, OM, PK, PR, SA, TN 
+🟢 Green 剩下国家是绿色都支持，支持护照和id卡
+
 
 - 请求：
 
