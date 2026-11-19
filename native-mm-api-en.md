@@ -21,6 +21,10 @@
         * [Corporate](#financial-declaration-corporate)
      * [Query virtual account list](#query-virtual-account-list)
 * [Webhook](#Webhook)
+     * [Event delivery and acknowledgement](#event-delivery-and-acknowledgement)
+     * [Deposit status event](#deposit-status-event)
+     * [Exchange status event](#exchange-status-event)
+     * [Virtual account status event](#virtual-account-status-event)
      * [Test push events](#Test-push-events)
 * [Error Codes](#error-codes)
 
@@ -297,6 +301,8 @@ method：POST
 }
 ```
 
+- Webhook: a successful response only confirms that the declaration was accepted. Listen for the [Deposit status event](#deposit-status-event) (`deposit-status`) to learn whether the balance was credited or the deposit failed. You can also poll [Exchange history](#exchange-history) with `type=deposit`.
+
 
 ### Query exchange rate
 
@@ -457,7 +463,8 @@ method：POST
 }
 ```
 
-- Amount and fee: the fee is deducted from the crypto amount (`to_amount = crypto_amount − fee`, converted at the executed rate). The order is created with status `INIT` and is settled after platform review; you are notified by Webhook, or you can poll [Exchange history](#exchange-history).
+- Amount and fee: the fee is deducted from the crypto amount (`to_amount = crypto_amount − fee`, converted at the executed rate). The order is created with status `INIT` and is settled after platform review.
+- Webhook: listen for the [Exchange status event](#exchange-status-event) (`exchange-status`) and match it by `tx_id`. The event reports the terminal `SUCCESS` or `FAILED` status; you can also poll [Exchange history](#exchange-history).
 
 
 ### Whitelist address list
@@ -570,6 +577,8 @@ method：POST
 }
 ```
 
+- Webhook: `INIT` in the response means that the order is awaiting processing. Listen for the [Exchange status event](#exchange-status-event) (`exchange-status`) and match it by `tx_id` to receive the final `SUCCESS` or `FAILED` result. You can also poll [Exchange history](#exchange-history).
+
 > Note: the legacy endpoint `POST /api/v1/mm/customer/asset/exchange/order` (crypto-amount based) is deprecated. New integrations must use `/exchange/buy` (spend based) and `/exchange/sell`.
 
 
@@ -657,6 +666,7 @@ method：POST
 | purpose_of_trans | String | Required | Purpose of transaction declaration |
 
 - Response: same structure as [Sell crypto](#sell-crypto).
+- Webhook: uses the same [Exchange status event](#exchange-status-event) (`exchange-status`) as the sell and buy endpoints. Match the result by `tx_id` and use `transaction_type` to determine the actual direction.
 
 
 
@@ -998,6 +1008,8 @@ All four apply endpoints (`/apply/basic/individual`, `/apply/basic/corporate`, `
 
 Note: only one application is kept per customer per currency. The financial declaration can only be submitted after the basic information of the same currency. Re-submitting either step while the application is `0`-PENDING_REVIEW, `2`-REJECTED or `3`-CREATE_FAILED updates that step's data and returns the status to `0`-PENDING_REVIEW; once the application is `1`-APPROVED it is locked and any re-submission returns an error.
 
+- Webhook: all four apply endpoints use the [Virtual account status event](#virtual-account-status-event) (`virtual-account-status`). Match the event by application `id` and `currency`; it reports `APPROVED`, `REJECTED` or `CREATE_FAILED`, together with the assigned account details when approved. The initial submission response is not a review result.
+
 
 ### Query virtual account list
 
@@ -1126,52 +1138,219 @@ method：GET
 ## Webhook
 
 
-After configure the Webhook in the Dashboard, please verify signature when you received events. The data structure of the event is:
+After configuring the Webhook URL in the Dashboard, your endpoint receives an HTTP `POST` request with a JSON body. Verify the `Signature` header before processing or acknowledging any event.
 
-| Parameter| Type|Description |
-| --- | --- |--- |
-| action |String | Event type  |
-| events | String[]|  events |
-| events[n].params | Object | Event content |
-| events[n].create_time|long |  UTC time |
-| events[n].id | String | Event id |
+All non-query MM operations covered by this document have a corresponding status event. Query/list/rate/history endpoints do not generate Webhook events.
 
-The data structure of header：
+| action | Related API operation | When the event is sent |
+| --- | --- | --- |
+| `deposit-status` | [Deposit asset](#deposit-asset) | On-chain verification finishes and the deposit is credited or fails |
+| `exchange-status` | [Sell crypto](#sell-crypto), [Buy crypto](#buy-crypto), [Exchange order (Deprecated)](#exchange-order-deprecated) | Platform review completes and the order becomes `SUCCESS` or `FAILED` |
+| `virtual-account-status` | All four [virtual account application](#apply-for-virtual-account---basic-information) endpoints | Application review finishes with `APPROVED`, `REJECTED` or `CREATE_FAILED` |
 
-| Parameter| Type|Description |
-| --- | --- |--- |
-| Signature |String | Signature  |
-| Timestamp | String | Timestamp |
+A successful synchronous API response only means that the request was accepted. Use the corresponding Webhook for the asynchronous result. If the API request itself returns a non-zero `code`, the operation was not accepted and no subsequent status event should be expected for that request.
 
-```
---header Timestamp：1585310160226
---header Signature：UqAwtsx9HF3s5yJh/c8luvUITZNXE/f3aujwndnXLBU=
+### Event delivery and acknowledgement
 
-```
-How to verify signature ? [Example](https://github.com/paycrypto-com/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/NotificationTest.java)
+The outer event envelope has the following structure:
 
+| Parameter | Type | Description |
+| --- | --- | --- |
+| action | String | Event type; see the event sections below |
+| events | String[] | One or more events. **Each array element is a JSON-encoded string, not a JSON object**; parse each element before reading its fields |
+| events[n].id | String | Unique event ID. Use it for idempotent processing and deduplication |
+| events[n].create_time | long | Event creation time, `UNIX` timestamp in milliseconds |
+| events[n].params | Object | Event-specific content, documented below |
 
-The data structure of response should as follows. **If you response correct data structure, the event will not be send again**:
+Example outer envelope (the escaped quotes are required because the event is a string):
 
-
-
-| Parameter| Type|Description |
-| --- | --- |--- |
-| code | int   |  0: Successful, other: Failure |
-|msg  |String  | code message |
-
-
-Response Example:
-
-```
-
+```json
 {
-   "code": 0,
-   "msg":"SUCCESS"
+    "action": "exchange-status",
+    "events": [
+        "{\"id\":\"evt_01JEXAMPLE0001\",\"create_time\":1768550600000,\"params\":{\"tx_id\":\"2011710781042962432\",\"transaction_type\":\"sell\",\"status\":\"SUCCESS\"}}"
+    ]
 }
 ```
 
-> Sell / buy orders are pushed as exchange events when the platform review completes (status becomes `SUCCESS` or `FAILED`).
+The request headers are:
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| Signature | String | Webhook request signature |
+| Timestamp | String | Signature timestamp, `UNIX` timestamp in milliseconds |
+
+```text
+Timestamp: 1585310160226
+Signature: UqAwtsx9HF3s5yJh/c8luvUITZNXE/f3aujwndnXLBU=
+```
+
+How to verify the signature: [Example](https://github.com/paycrypto-com/paycrypto-sdk-java/blob/master/src/test/java/com/railone/open/api/test/NotificationTest.java).
+
+After successfully verifying and accepting the event, return the following JSON response. **Returning `code: 0` acknowledges the event and prevents further retries.**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| code | int | `0`: successful; any other value: failure |
+| msg | String | Response message |
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS"
+}
+```
+
+Delivery and processing requirements:
+
+- Return `code: 0` only after signature verification succeeds and the event can be processed safely. An invalid signature, non-zero `code`, invalid response body, connection failure or timeout is treated as a failed delivery and may be retried.
+- Retries can deliver the same event more than once. Deduplicate by `events[n].id`; do not create a second deposit, exchange or virtual account operation when handling a duplicate.
+- A request may contain multiple events. Parse and process every element of `events`, not only the first one.
+- Do not rely on delivery order. Use the business ID and status-change time in `params`, and use the relevant query endpoint to reconcile the latest state when necessary.
+- Webhook delivery is asynchronous and is not a replacement for reconciliation. You can still poll [Exchange history](#exchange-history) or [Query virtual account list](#query-virtual-account-list) as a fallback.
+
+
+### Deposit status event
+
+Sent after a deposit submitted through `POST /api/v1/mm/customer/asset/deposit` completes on-chain verification. A successful API response to `/deposit` does **not** mean that the balance has already been credited; wait for this event or poll [Exchange history](#exchange-history) with `type=deposit`.
+
+```text
+action: deposit-status
+```
+
+`events[n].params`:
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| order_no | String | Deposit reference; matches `order_no` in [Exchange history](#exchange-history) |
+| tx_hash | String | On-chain transaction hash declared in the deposit request |
+| uni_asset_code | String | Credited asset, e.g. `USDT_TRC20`, `USDT_ERC20`, `USDC_ERC20` |
+| amount | String | Actual on-chain deposit amount |
+| status | String | `SUCCESS`: credited to the customer balance; `FAILED`: verification or crediting failed |
+| reason | String | Failure reason; `null` when not applicable |
+| tx_time | long | Last status-change time, `UNIX` timestamp in milliseconds |
+
+Example:
+
+```json
+{
+    "action": "deposit-status",
+    "events": [
+        "{\"id\":\"evt_deposit_0001\",\"create_time\":1768550600000,\"params\":{\"order_no\":\"2011710781042962400\",\"tx_hash\":\"0x8f2f...a91c\",\"uni_asset_code\":\"USDT_ERC20\",\"amount\":\"1000\",\"status\":\"SUCCESS\",\"reason\":null,\"tx_time\":1768550590000}}"
+    ]
+}
+```
+
+The parsed `events[0]` object is:
+
+```json
+{
+    "id": "evt_deposit_0001",
+    "create_time": 1768550600000,
+    "params": {
+        "order_no": "2011710781042962400",
+        "tx_hash": "0x8f2f...a91c",
+        "uni_asset_code": "USDT_ERC20",
+        "amount": "1000",
+        "status": "SUCCESS",
+        "reason": null,
+        "tx_time": 1768550590000
+    }
+}
+```
+
+For a failed deposit, `status` is `FAILED` and `reason` contains the available failure details. Do not credit the customer balance based solely on a successful `/deposit` API response.
+
+
+### Exchange status event
+
+Sent when an order created by any of the following endpoints finishes platform review:
+
+- `POST /api/v1/mm/customer/asset/exchange/sell`
+- `POST /api/v1/mm/customer/asset/exchange/buy`
+- `POST /api/v1/mm/customer/asset/exchange/order` (deprecated)
+
+All three operations use the same event structure. `transaction_type` identifies a sell or buy order.
+
+```text
+action: exchange-status
+```
+
+`events[n].params`:
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| tx_id | String | Exchange order ID returned by the sell/buy API; matches `order_no` in [Exchange history](#exchange-history) |
+| transaction_type | String | `sell` or `buy` |
+| from_uni_asset_code | String | Asset paid by the customer |
+| from_amount | String | Amount paid by the customer |
+| to_uni_asset_code | String | Asset received by the customer or payee |
+| to_amount | String | Final amount after fee and exchange-rate conversion |
+| fee | String | Executed fee, denominated in `from_uni_asset_code` |
+| status | String | `SUCCESS`: completed; `FAILED`: failed |
+| reason | String | Failure reason; `null` when not applicable |
+| created_at | String | Order creation time, ISO-8601 UTC |
+| updated_at | String | Last status-change time, ISO-8601 UTC |
+
+Sell order example:
+
+```json
+{
+    "action": "exchange-status",
+    "events": [
+        "{\"id\":\"evt_exchange_0001\",\"create_time\":1768550600000,\"params\":{\"tx_id\":\"2011710781042962432\",\"transaction_type\":\"sell\",\"from_uni_asset_code\":\"USDT_TRC20\",\"from_amount\":\"1000\",\"to_uni_asset_code\":\"USD\",\"to_amount\":\"997\",\"fee\":\"3\",\"status\":\"SUCCESS\",\"reason\":null,\"created_at\":\"2026-01-15T08:03:20.000+00:00\",\"updated_at\":\"2026-01-16T08:03:20.000+00:00\"}}"
+    ]
+}
+```
+
+Buy orders use the same fields, with `transaction_type: "buy"`, a fiat `from_uni_asset_code` and a crypto `to_uni_asset_code`. Orders created through the deprecated `/exchange/order` endpoint are identified in the same way according to their actual direction.
+
+The initial API response may contain `status: "INIT"`; this is not the final result. The Webhook reports the terminal `SUCCESS` or `FAILED` status. If a notification is delayed, query [Exchange history](#exchange-history) and reconcile by `tx_id` / `order_no` (`tx_status: 1` = success, `tx_status: 4` = failed).
+
+
+### Virtual account status event
+
+Sent when review finishes for an application created or updated through any of these endpoints:
+
+- `POST /api/v1/mm/va/apply/basic/individual`
+- `POST /api/v1/mm/va/apply/basic/corporate`
+- `POST /api/v1/mm/va/apply/financial/individual`
+- `POST /api/v1/mm/va/apply/financial/corporate`
+
+The basic-information and financial-declaration calls update the same application for a customer and currency. They therefore share one `virtual-account-status` event rather than producing separate individual/corporate or basic/financial event types. Re-submitting a step updates the application; the next event is sent when the new review reaches a terminal result.
+
+```text
+action: virtual-account-status
+```
+
+`events[n].params`:
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | long | Local application record ID returned by the apply API |
+| currency | String | Virtual account currency, e.g. `USD` |
+| client_type | String | `retail` (individual) or `corporate` (enterprise) |
+| created_and_assigned | int | `1`: `APPROVED` and account created; `2`: `REJECTED`; `3`: `CREATE_FAILED` |
+| virtual_acct_no | String | Assigned virtual account number after approval; `null` otherwise |
+| virtual_iban | String | Assigned virtual IBAN after approval; `null` otherwise |
+| virtual_acct_status | String | Account status reported by the bank after approval; `null` otherwise |
+| reason | String | Rejection or account-creation failure reason; `null` when not applicable |
+| update_time | long | Last application update time, `UNIX` timestamp in milliseconds |
+
+Approved application example:
+
+```json
+{
+    "action": "virtual-account-status",
+    "events": [
+        "{\"id\":\"evt_va_0001\",\"create_time\":1768550600000,\"params\":{\"id\":12,\"currency\":\"USD\",\"client_type\":\"retail\",\"created_and_assigned\":1,\"virtual_acct_no\":\"847201935762\",\"virtual_iban\":\"SG83BANK0000847201935762\",\"virtual_acct_status\":\"ACTIVE\",\"reason\":null,\"update_time\":1768550600000}}"
+    ]
+}
+```
+
+For `created_and_assigned: 2` (`REJECTED`) or `3` (`CREATE_FAILED`), inspect `reason`; account fields can be `null`. The event intentionally contains only application identifiers, account assignment and review status. Call [Query virtual account list](#query-virtual-account-list) when the full KYC application record is required.
+
+`created_and_assigned: 0` (`PENDING_REVIEW`) is an intermediate state and does not represent a completed review. Do not treat submission of either application step as approval.
 
 
 ### Test push events
@@ -1190,7 +1369,7 @@ method：POST
 
 | Parameter| Type|Description |
 | --- | --- |--- |
-| action |String |  deposit-status|
+| action |String |  `test` |
 | events[n].params |Object | event parameters |
 
 Example：
