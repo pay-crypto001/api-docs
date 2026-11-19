@@ -405,7 +405,8 @@ method：GET
 | swift_code | String | SWIFT code |
 | currency | String | Supported receive currencies, may be comma-separated (e.g. `USD,EUR`) |
 | status | int | Review status. Only `1` (approved) receivers can be used in sell orders |
-| create_time / update_time | String | Creation / update time, ISO-8601 (UTC) |
+| create_time | String | Creation time, ISO-8601 (UTC) |
+| update_time | String | Last update time, ISO-8601 (UTC) |
 
 
 ### Sell crypto
@@ -520,7 +521,8 @@ method：GET
 | address | String | Whitelist address. Pass it as `address` when placing a buy order |
 | address_name | String | Address label |
 | status | int | Only `1` (enabled) addresses can be used in buy orders |
-| create_time / update_time | String | Creation / update time, ISO-8601 (UTC) |
+| create_time | String | Creation time, ISO-8601 (UTC) |
+| update_time | String | Last update time, ISO-8601 (UTC) |
 
 
 ### Buy crypto
@@ -645,7 +647,8 @@ method：GET
 | tx_status | int | Order status. Sell/buy: `0` submitted (pending platform review), `1` success, `2` paying out, `4` failed. Deposit: on-chain credit status |
 | amount | String | Crypto amount of the record |
 | tx_time | String | Last status-change time, `UNIX` timestamp in `milliseconds` |
-| create_time / update_time | String | Creation / update time, ISO-8601 (UTC) |
+| create_time | String | Creation time, ISO-8601 (UTC) |
+| update_time | String | Last update time, ISO-8601 (UTC) |
 
 
 ### Exchange order (Deprecated)
@@ -999,12 +1002,13 @@ All four apply endpoints (`/apply/basic/individual`, `/apply/basic/corporate`, `
 |   mail   | String |        Contact email used for the application              |
 |   virtual_acct_no   | String |        Virtual account number, assigned after approval (`null` before that)              |
 |   virtual_iban   | String |        Virtual IBAN, assigned after approval (`null` before that)              |
-|   virtual_acct_status   | String |        Virtual account status reported by the bank (available after approval)              |
+|   virtual_acct_status   | String |        Virtual account status: `A`: success; `F`: failed; `null` when no account status is available              |
 |   created_and_assigned   | int |        Review status: `0`-PENDING_REVIEW, `1`-APPROVED (account created), `2`-REJECTED, `3`-CREATE_FAILED (can be reviewed again)              |
 |   reason   | String |        Reject / failure reason              |
 |   kyc_basic   | Object |        KYC info of the basic information step (stored locally, not sent to the bank). `documents[].file_url` is the uploaded S3 file URL and `documents[].file_name` is the server-generated file name; `file_base64` is always `null` here              |
 |   kyc_financial   | Object |        KYC info of the financial declaration step (stored locally, not sent to the bank); document fields follow the same rules as `kyc_basic`. `null` when the financial declaration step has not been submitted yet              |
-|   create_time / update_time   | long |        `UNIX` timestamp, unit: `milliseconds`              |
+|   create_time   | long |        Creation time, `UNIX` timestamp in milliseconds              |
+|   update_time   | long |        Last update time, `UNIX` timestamp in milliseconds              |
 
 Note: only one application is kept per customer per currency. The financial declaration can only be submitted after the basic information of the same currency. Re-submitting either step while the application is `0`-PENDING_REVIEW, `2`-REJECTED or `3`-CREATE_FAILED updates that step's data and returns the status to `0`-PENDING_REVIEW; once the application is `1`-APPROVED it is locked and any re-submission returns an error.
 
@@ -1042,7 +1046,7 @@ method：GET
             "mail": "customer@example.com",
             "virtual_acct_no": "847201935762",
             "virtual_iban": "SG83BANK0000847201935762",
-            "virtual_acct_status": "ACTIVE",
+            "virtual_acct_status": "A",
             "created_and_assigned": 1,
             "reason": null,
             "kyc_basic": {
@@ -1126,11 +1130,13 @@ method：GET
 |   mail   | String |        Contact email used for the application              |
 |   virtual_acct_no   | String |        Virtual account number, assigned after approval (`null` before that)              |
 |   virtual_iban   | String |        Virtual IBAN, assigned after approval (`null` before that)              |
-|   virtual_acct_status   | String |        Virtual account status reported by the bank (available after approval)              |
+|   virtual_acct_status   | String |        Virtual account status: `A`: success; `F`: failed; `null` when no account status is available              |
 |   created_and_assigned   | int |        Review status: `0`-PENDING_REVIEW, `1`-APPROVED (account created), `2`-REJECTED, `3`-CREATE_FAILED (can be reviewed again)              |
 |   reason   | String |        Reject / failure reason              |
-|   kyc_basic / kyc_financial   | Object |        KYC info of the basic information / financial declaration step (same structure as the apply response); each is `null` when its step has not been submitted yet              |
-|   create_time / update_time   | long |        `UNIX` timestamp, unit: `milliseconds`              |
+|   kyc_basic   | Object |        KYC info of the basic information step (same structure as the apply response); `null` when this step has not been submitted yet              |
+|   kyc_financial   | Object |        KYC info of the financial declaration step (same structure as the apply response); `null` when this step has not been submitted yet              |
+|   create_time   | long |        Creation time, `UNIX` timestamp in milliseconds              |
+|   update_time   | long |        Last update time, `UNIX` timestamp in milliseconds              |
 
 
 
@@ -1333,7 +1339,7 @@ action: virtual-account-status
 | created_and_assigned | int | `1`: `APPROVED` and account created; `2`: `REJECTED`; `3`: `CREATE_FAILED` |
 | virtual_acct_no | String | Assigned virtual account number after approval; `null` otherwise |
 | virtual_iban | String | Assigned virtual IBAN after approval; `null` otherwise |
-| virtual_acct_status | String | Account status reported by the bank after approval; `null` otherwise |
+| virtual_acct_status | String | Virtual account status: `A`: success; `F`: failed; `null` when no account status is available |
 | reason | String | Rejection or account-creation failure reason; `null` when not applicable |
 | update_time | long | Last application update time, `UNIX` timestamp in milliseconds |
 
@@ -1343,7 +1349,7 @@ Approved application example:
 {
     "action": "virtual-account-status",
     "events": [
-        "{\"id\":\"evt_va_0001\",\"create_time\":1768550600000,\"params\":{\"id\":12,\"currency\":\"USD\",\"client_type\":\"retail\",\"created_and_assigned\":1,\"virtual_acct_no\":\"847201935762\",\"virtual_iban\":\"SG83BANK0000847201935762\",\"virtual_acct_status\":\"ACTIVE\",\"reason\":null,\"update_time\":1768550600000}}"
+        "{\"id\":\"evt_va_0001\",\"create_time\":1768550600000,\"params\":{\"id\":12,\"currency\":\"USD\",\"client_type\":\"retail\",\"created_and_assigned\":1,\"virtual_acct_no\":\"847201935762\",\"virtual_iban\":\"SG83BANK0000847201935762\",\"virtual_acct_status\":\"A\",\"reason\":null,\"update_time\":1768550600000}}"
     ]
 }
 ```
